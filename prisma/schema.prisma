@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String    @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  image          String?
+  bio            String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+  opportunities  Opportunity[]
+  diaryEntries   DiaryEntry[]
+  courses        Course[]
+  scholarships   Scholarship[]
+}
+
+model Opportunity {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  category        String
+  organization    String
+  websiteUrl      String?
+  applicationUrl  String?
+  status          String   @default("WISHLIST")
+  programStatus   String?
+  dropReason      String?
+  certificateUrl  String?
+  certificateName String?
+  deadline        DateTime?
+  startDate       DateTime?
+  endDate         DateTime?
+  region          String?
+  tags            String?
+  funding         String?
+  description     String?
+  personalNotes   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  statusHistory   StatusHistory[]
+  diaryEntries    DiaryEntry[]
+
+  @@index([userId])
+  @@index([category])
+  @@index([status])
+  @@index([deadline])
+}
+
+model StatusHistory {
+  id            String   @id @default(cuid())
+  opportunityId String
+  fromStatus    String?
+  toStatus      String
+  note          String?
+  changedAt     DateTime @default(now())
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([opportunityId])
+}
+
+model DiaryEntry {
+  id              String   @id @default(cuid())
+  userId          String
+  title           String
+  date            DateTime
+  type            String
+  content         String
+  linkedOppId     String?
+  mood            Int?
+  tags            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity     Opportunity? @relation(fields: [linkedOppId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([type])
+  @@index([date])
+}
+
+model Course {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  platform        String
+  instructor      String?
+  url             String?
+  status          String   @default("NOT_STARTED")
+  progress        Int      @default(0)
+  category        String?
+  startDate       DateTime?
+  endDate         DateTime?
+  deadline        DateTime?
+  certificate     String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([platform])
+}
+
+model Scholarship {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  organization    String
+  url             String?
+  status          String   @default("WISHLIST")
+  amount          String?
+  deadline        DateTime?
+  startDate       DateTime?
+  endDate         DateTime?
+  requirements    String?
+  description     String?
+  notes           String?
+  tags            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([deadline])
+}
