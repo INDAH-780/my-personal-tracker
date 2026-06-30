@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import MotivationalQuote from "@/components/MotivationalQuote";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -55,6 +56,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
+      <MotivationalQuote />
     </div>
   );
 }
