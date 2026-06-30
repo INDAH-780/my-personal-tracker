@@ -90,22 +90,22 @@ export default function Home() {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between px-8 py-6 animate-fade-in">
+      <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 sm:py-6 animate-fade-in">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
-          <span className="text-white text-xl font-bold tracking-tight font-display">Opportunity Tracker</span>
+          <span className="text-white text-lg sm:text-xl font-bold tracking-tight font-display hidden sm:block">Opportunity Tracker</span>
         </div>
-        <div className="flex items-center gap-4">
-          <button onClick={() => openAuth("login")} className="text-white/70 hover:text-white transition-colors px-4 py-2">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button onClick={() => openAuth("login")} className="text-white/70 hover:text-white transition-colors px-3 sm:px-4 py-2 text-sm sm:text-base">
             Sign In
           </button>
-          <button onClick={() => openAuth("register")} className="btn-accent">
+          <button onClick={() => openAuth("register")} className="btn-accent text-sm sm:text-base px-4 sm:px-6">
             Get Started
           </button>
         </div>
@@ -114,36 +114,36 @@ export default function Home() {
       {/* Hero Section */}
       <main className="relative z-10 flex flex-col items-center justify-center min-h-[85vh] px-4 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="animate-slide-up stagger-1 mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-primary text-sm font-medium border border-white/10">
+          <div className="animate-slide-up stagger-1 mb-4 sm:mb-6">
+            <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 backdrop-blur-sm rounded-full text-primary text-xs sm:text-sm font-medium border border-white/10">
               <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
               Track every opportunity in one place
             </span>
           </div>
 
-          <h1 className="animate-slide-up stagger-2 font-display text-6xl md:text-8xl font-bold text-white mb-8 leading-[0.9] tracking-tight">
+          <h1 className="animate-slide-up stagger-2 font-display text-4xl sm:text-6xl md:text-8xl font-bold text-white mb-6 sm:mb-8 leading-[0.9] tracking-tight">
             Your Journey,
             <br />
             <span className="text-gradient">Organized</span>
           </h1>
 
-          <p className="animate-slide-up stagger-3 text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="animate-slide-up stagger-3 text-base sm:text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed">
             Fellowships, scholarships, research programs, mentorships — track deadlines, 
             manage applications, and document your path to success.
           </p>
 
-          <div className="animate-slide-up stagger-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={() => openAuth("register")} className="btn-accent text-lg px-10 py-4">
+          <div className="animate-slide-up stagger-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <button onClick={() => openAuth("register")} className="btn-accent text-base sm:text-lg px-8 sm:px-10 py-3 sm:py-4 w-full sm:w-auto">
               Start Tracking Free
             </button>
-            <button onClick={() => openAuth("login")} className="btn-secondary border-white/20 text-white hover:bg-white hover:text-black text-lg px-10 py-4">
+            <button onClick={() => openAuth("login")} className="btn-secondary border-white/20 text-white hover:bg-white hover:text-black text-base sm:text-lg px-8 sm:px-10 py-3 sm:py-4 w-full sm:w-auto">
               Sign In
             </button>
           </div>
         </div>
 
         {/* Feature cards */}
-        <div className="animate-slide-up stagger-5 grid grid-cols-2 md:grid-cols-4 gap-4 mt-20 max-w-4xl w-full">
+        <div className="animate-slide-up stagger-5 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-12 sm:mt-20 max-w-4xl w-full">
           {[
             { icon: "🎯", label: "Track Opportunities", desc: "Fellowships & more" },
             { icon: "📅", label: "Smart Calendar", desc: "Never miss a deadline" },
@@ -152,13 +152,13 @@ export default function Home() {
           ].map((feature, i) => (
             <div
               key={i}
-              className="group p-5 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-primary/30 transition-all duration-300 cursor-default"
+              className="group p-4 sm:p-5 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-primary/30 transition-all duration-300 cursor-default"
             >
-              <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-2xl sm:text-3xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">
                 {feature.icon}
               </div>
-              <h3 className="text-white font-semibold text-sm">{feature.label}</h3>
-              <p className="text-white/40 text-xs mt-1">{feature.desc}</p>
+              <h3 className="text-white font-semibold text-xs sm:text-sm">{feature.label}</h3>
+              <p className="text-white/40 text-[10px] sm:text-xs mt-1">{feature.desc}</p>
             </div>
           ))}
         </div>

@@ -97,14 +97,14 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-display">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display">
             <span className="text-[#F9ABDF]">Opportunities</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">{opportunities.length} items tracked</p>
         </div>
-        <Link href="/opportunities/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center gap-2">
+        <Link href="/opportunities/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center justify-center gap-2 text-sm sm:text-base">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -234,8 +234,8 @@ export default function OpportunitiesPage() {
       </div>
 
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
+        <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-1">
+          <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">Sort by:</span>
           {[
             { value: "deadline", label: "Deadline" },
             { value: "name", label: "Name" },
@@ -248,7 +248,7 @@ export default function OpportunitiesPage() {
                 if (sortBy === opt.value) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                 else { setSortBy(opt.value); setSortOrder("asc"); }
               }}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-sm font-medium transition-colors shrink-0 ${
                 sortBy === opt.value
                   ? "text-[#F9ABDF]"
                   : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -288,7 +288,8 @@ export default function OpportunitiesPage() {
           </div>
         ) : (
           <div className="divide-y divide-[#F9ABDF]/10 dark:divide-[#F9ABDF]/5">
-            <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/5 text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
+            {/* Desktop Table Header */}
+            <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/5 text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
               <div className="col-span-4">Opportunity</div>
               <div className="col-span-2">Category</div>
               <div className="col-span-2">Status</div>
@@ -297,49 +298,87 @@ export default function OpportunitiesPage() {
             </div>
 
             {opportunities.map((opp) => (
-              <div
-                key={opp.id}
-                className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors items-center group"
-              >
+              <div key={opp.id}>
+                {/* Desktop Row */}
                 <div
-                  className="col-span-4 cursor-pointer"
+                  className="hidden lg:grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors items-center group"
+                >
+                  <div
+                    className="col-span-4 cursor-pointer"
+                    onClick={() => router.push(`/opportunities/${opp.id}`)}
+                  >
+                    <p className="font-semibold text-gray-900 group-hover:text-[#F9ABDF] transition-colors truncate dark:text-white">
+                      {opp.name}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{opp.organization}</p>
+                  </div>
+
+                  <div className="col-span-2">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#F9ABDF]/20 text-xs font-medium text-gray-700 dark:text-gray-300">
+                      {CATEGORY_LABELS[opp.category as OpportunityCategory]}
+                    </span>
+                  </div>
+
+                  <div className="col-span-2">
+                    <StatusDropdown
+                      oppId={opp.id}
+                      currentStatus={opp.status}
+                      isUpdating={updatingStatus === opp.id}
+                      onChange={handleStatusChange}
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {opp.funding ? FUNDING_LABELS[opp.funding as FundingType] : "—"}
+                    </span>
+                  </div>
+
+                  <div className="col-span-2 text-right">
+                    {opp.deadline ? (
+                      <span className={`text-sm ${isUpcoming(opp.deadline) ? "text-red-500 font-medium" : "text-gray-500 dark:text-gray-400"}`}>
+                        {formatDate(opp.deadline)}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-gray-300 dark:text-gray-600">No deadline</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mobile Card */}
+                <div
+                  className="lg:hidden p-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors cursor-pointer"
                   onClick={() => router.push(`/opportunities/${opp.id}`)}
                 >
-                  <p className="font-semibold text-gray-900 group-hover:text-[#F9ABDF] transition-colors truncate dark:text-white">
-                    {opp.name}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{opp.organization}</p>
-                </div>
-
-                <div className="col-span-2">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#F9ABDF]/20 text-xs font-medium text-gray-700 dark:text-gray-300">
-                    {CATEGORY_LABELS[opp.category as OpportunityCategory]}
-                  </span>
-                </div>
-
-                <div className="col-span-2">
-                  <StatusDropdown
-                    oppId={opp.id}
-                    currentStatus={opp.status}
-                    isUpdating={updatingStatus === opp.id}
-                    onChange={handleStatusChange}
-                  />
-                </div>
-
-                <div className="col-span-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {opp.funding ? FUNDING_LABELS[opp.funding as FundingType] : "—"}
-                  </span>
-                </div>
-
-                <div className="col-span-2 text-right">
-                  {opp.deadline ? (
-                    <span className={`text-sm ${isUpcoming(opp.deadline) ? "text-red-500 font-medium" : "text-gray-500 dark:text-gray-400"}`}>
-                      {formatDate(opp.deadline)}
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-gray-900 dark:text-white truncate">{opp.name}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{opp.organization}</p>
+                    </div>
+                    {opp.deadline ? (
+                      <span className={`text-xs font-medium shrink-0 ${isUpcoming(opp.deadline) ? "text-red-500" : "text-gray-500 dark:text-gray-400"}`}>
+                        {formatDate(opp.deadline)}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#F9ABDF]/20 text-[11px] font-medium text-gray-700 dark:text-gray-300">
+                      {CATEGORY_LABELS[opp.category as OpportunityCategory]}
                     </span>
-                  ) : (
-                    <span className="text-sm text-gray-300 dark:text-gray-600">No deadline</span>
-                  )}
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <StatusDropdown
+                        oppId={opp.id}
+                        currentStatus={opp.status}
+                        isUpdating={updatingStatus === opp.id}
+                        onChange={handleStatusChange}
+                      />
+                    </div>
+                    {opp.funding && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {FUNDING_LABELS[opp.funding as FundingType]}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

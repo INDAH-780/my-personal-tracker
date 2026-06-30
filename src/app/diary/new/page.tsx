@@ -60,7 +60,7 @@ export default function NewDiaryEntryPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
             <input type="text" value={form.title} onChange={(e) => set("title", e.target.value)} className="input-field" required />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
               <input type="date" value={form.date} onChange={(e) => set("date", e.target.value)} className="input-field" />
@@ -121,7 +121,7 @@ export default function NewDiaryEntryPage() {
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button type="submit" disabled={saving} className="btn-primary">{saving ? "Saving..." : "Save Entry"}</button>
           <button type="button" onClick={() => router.back()} className="btn-secondary">Cancel</button>
         </div>

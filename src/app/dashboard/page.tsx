@@ -32,7 +32,7 @@ export default function DashboardPage() {
     return (
       <div className="animate-pulse space-y-6">
         <div className="h-32 bg-[#F9ABDF]/10 rounded-2xl dark:bg-[#F9ABDF]/20"></div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-24 bg-[#F9ABDF]/10 rounded-2xl dark:bg-[#F9ABDF]/20"></div>
           ))}
@@ -48,14 +48,14 @@ export default function DashboardPage() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-display">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display">
             <span className="text-[#F9ABDF]">Dashboard</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Welcome back! Here&apos;s your overview.</p>
         </div>
-        <Link href="/opportunities/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center gap-2">
+        <Link href="/opportunities/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center justify-center gap-2 text-sm sm:text-base">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -229,7 +229,7 @@ function StatCard({ label, value, icon, color }: {
           {icon}
         </div>
       </div>
-      <p className="text-3xl font-bold font-display">{value}</p>
+      <p className="text-2xl sm:text-3xl font-bold font-display">{value}</p>
       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{label}</p>
     </div>
   );

@@ -64,89 +64,116 @@ const navItems = [
   )},
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
 
+  const handleNavClick = () => {
+    if (window.innerWidth < 1024) {
+      onToggle();
+    }
+  };
+
   return (
-    <aside className="w-64 bg-black min-h-screen flex flex-col border-r border-[#F9ABDF]/20 dark:bg-gray-950 dark:border-[#F9ABDF]/10">
-      {/* Logo */}
-      <div className="p-6 border-b border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10">
-        <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-[#F9ABDF] rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
-          <span className="text-white text-lg font-bold tracking-tight font-display">
-            Tracker
-          </span>
-        </Link>
-      </div>
+    <>
+      {/* Backdrop overlay - mobile only */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
+          onClick={onToggle}
+        />
+      )}
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
-                isActive
-                  ? "bg-[#F9ABDF] text-black"
-                  : "text-white/60 hover:text-white hover:bg-[#F9ABDF]/10 dark:text-gray-400 dark:hover:text-white dark:hover:bg-[#F9ABDF]/10"
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Sidebar */}
+      <aside
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-black min-h-screen flex flex-col border-r border-[#F9ABDF]/20 dark:bg-gray-950 dark:border-[#F9ABDF]/10 transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
+        {/* Logo */}
+        <div className="p-6 border-b border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10">
+          <Link href="/dashboard" className="flex items-center gap-3 group" onClick={handleNavClick}>
+            <div className="w-10 h-10 bg-[#F9ABDF] rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <span className="text-white text-lg font-bold tracking-tight font-display">
+              Tracker
+            </span>
+          </Link>
+        </div>
 
-      {/* Bottom Actions */}
-      <div className="p-4 border-t border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10 space-y-2">
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-[#F9ABDF]/10 w-full transition-all duration-300 dark:text-gray-400 dark:hover:text-white dark:hover:bg-[#F9ABDF]/10"
-        >
-          {theme === "light" ? (
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={handleNavClick}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  isActive
+                    ? "bg-[#F9ABDF] text-black"
+                    : "text-white/60 hover:text-white hover:bg-[#F9ABDF]/10 dark:text-gray-400 dark:hover:text-white dark:hover:bg-[#F9ABDF]/10"
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Bottom Actions */}
+        <div className="p-4 border-t border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10 space-y-2">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-[#F9ABDF]/10 w-full transition-all duration-300 dark:text-gray-400 dark:hover:text-white dark:hover:bg-[#F9ABDF]/10"
+          >
+            {theme === "light" ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            )}
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </button>
+
+          {/* Sign Out */}
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/40 hover:text-red-400 hover:bg-red-500/10 w-full transition-all duration-300 dark:text-gray-500 dark:hover:text-red-400 dark:hover:bg-red-500/10"
+          >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
             </svg>
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" />
-              <line x1="21" y1="12" x2="23" y2="12" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-            </svg>
-          )}
-          {theme === "light" ? "Dark Mode" : "Light Mode"}
-        </button>
-
-        {/* Sign Out */}
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white/40 hover:text-red-400 hover:bg-red-500/10 w-full transition-all duration-300 dark:text-gray-500 dark:hover:text-red-400 dark:hover:bg-red-500/10"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-          Sign Out
-        </button>
-      </div>
-    </aside>
+            Sign Out
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

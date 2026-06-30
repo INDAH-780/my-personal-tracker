@@ -81,14 +81,14 @@ export default function CoursesPage() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-display">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display">
             <span className="text-[#F9ABDF]">Courses</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">{courses.length} courses tracked</p>
         </div>
-        <Link href="/courses/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center gap-2">
+        <Link href="/courses/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center justify-center gap-2 text-sm sm:text-base">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -172,8 +172,8 @@ export default function CoursesPage() {
 
       {/* Sort Bar */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
+        <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-1">
+          <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">Sort by:</span>
           {[
             { value: "createdAt", label: "Date Added" },
             { value: "name", label: "Name" },
@@ -186,7 +186,7 @@ export default function CoursesPage() {
                 if (sortBy === opt.value) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                 else { setSortBy(opt.value); setSortOrder("asc"); }
               }}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-sm font-medium transition-colors shrink-0 ${
                 sortBy === opt.value
                   ? "text-[#F9ABDF]"
                   : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -228,8 +228,8 @@ export default function CoursesPage() {
           </div>
         ) : (
           <div className="divide-y divide-[#F9ABDF]/10 dark:divide-[#F9ABDF]/5">
-            {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/5 text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
+            {/* Desktop Table Header */}
+            <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/5 text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
               <div className="col-span-4">Course</div>
               <div className="col-span-2">Platform</div>
               <div className="col-span-2">Status</div>
@@ -239,42 +239,94 @@ export default function CoursesPage() {
 
             {/* Table Rows */}
             {courses.map((course) => (
-              <div
-                key={course.id}
-                className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors items-center group"
-              >
-                {/* Name - clickable */}
+              <div key={course.id}>
+                {/* Desktop Row */}
                 <div
-                  className="col-span-4 cursor-pointer"
+                  className="hidden lg:grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors items-center group"
+                >
+                  <div
+                    className="col-span-4 cursor-pointer"
+                    onClick={() => router.push(`/courses/${course.id}`)}
+                  >
+                    <p className="font-semibold text-gray-900 group-hover:text-[#F9ABDF] transition-colors truncate dark:text-white">
+                      {course.name}
+                    </p>
+                    {course.instructor && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{course.instructor}</p>
+                    )}
+                  </div>
+
+                  <div className="col-span-2">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#F9ABDF]/20 text-xs font-medium text-gray-700 dark:text-gray-300">
+                      {course.platform}
+                    </span>
+                  </div>
+
+                  <div className="col-span-2">
+                    <StatusDropdown
+                      courseId={course.id}
+                      currentStatus={course.status}
+                      isUpdating={updatingStatus === course.id}
+                      onChange={handleStatusChange}
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-2 bg-[#F9ABDF]/10 rounded-full dark:bg-[#F9ABDF]/20">
+                        <div
+                          className="h-2 bg-[#F9ABDF] rounded-full transition-all duration-500"
+                          style={{ width: `${course.progress}%` }}
+                        />
+                      </div>
+                      <span className="text-sm text-gray-600 dark:text-gray-400 w-10 text-right">
+                        {course.progress}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 text-right">
+                    {course.deadline ? (
+                      <span className={`text-sm ${isUpcoming(course.deadline) ? "text-red-500 font-medium" : "text-gray-500 dark:text-gray-400"}`}>
+                        {formatDate(course.deadline)}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-gray-300 dark:text-gray-600">No deadline</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mobile Card */}
+                <div
+                  className="lg:hidden p-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors cursor-pointer"
                   onClick={() => router.push(`/courses/${course.id}`)}
                 >
-                  <p className="font-semibold text-gray-900 group-hover:text-[#F9ABDF] transition-colors truncate dark:text-white">
-                    {course.name}
-                  </p>
-                  {course.instructor && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{course.instructor}</p>
-                  )}
-                </div>
-
-                {/* Platform */}
-                <div className="col-span-2">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#F9ABDF]/20 text-xs font-medium text-gray-700 dark:text-gray-300">
-                    {course.platform}
-                  </span>
-                </div>
-
-                {/* Status - Dropdown */}
-                <div className="col-span-2">
-                  <StatusDropdown
-                    courseId={course.id}
-                    currentStatus={course.status}
-                    isUpdating={updatingStatus === course.id}
-                    onChange={handleStatusChange}
-                  />
-                </div>
-
-                {/* Progress */}
-                <div className="col-span-2">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-gray-900 dark:text-white truncate">{course.name}</p>
+                      {course.instructor && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{course.instructor}</p>
+                      )}
+                    </div>
+                    {course.deadline ? (
+                      <span className={`text-xs font-medium shrink-0 ${isUpcoming(course.deadline) ? "text-red-500" : "text-gray-500 dark:text-gray-400"}`}>
+                        {formatDate(course.deadline)}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#F9ABDF]/20 text-[11px] font-medium text-gray-700 dark:text-gray-300">
+                      {course.platform}
+                    </span>
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <StatusDropdown
+                        courseId={course.id}
+                        currentStatus={course.status}
+                        isUpdating={updatingStatus === course.id}
+                        onChange={handleStatusChange}
+                      />
+                    </div>
+                  </div>
                   <div className="flex items-center gap-3">
                     <div className="flex-1 h-2 bg-[#F9ABDF]/10 rounded-full dark:bg-[#F9ABDF]/20">
                       <div
@@ -282,21 +334,8 @@ export default function CoursesPage() {
                         style={{ width: `${course.progress}%` }}
                       />
                     </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400 w-10 text-right">
-                      {course.progress}%
-                    </span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">{course.progress}%</span>
                   </div>
-                </div>
-
-                {/* Deadline */}
-                <div className="col-span-2 text-right">
-                  {course.deadline ? (
-                    <span className={`text-sm ${isUpcoming(course.deadline) ? "text-red-500 font-medium" : "text-gray-500 dark:text-gray-400"}`}>
-                      {formatDate(course.deadline)}
-                    </span>
-                  ) : (
-                    <span className="text-sm text-gray-300 dark:text-gray-600">No deadline</span>
-                  )}
                 </div>
               </div>
             ))}

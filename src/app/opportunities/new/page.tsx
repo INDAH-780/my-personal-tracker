@@ -61,7 +61,7 @@ export default function NewOpportunityPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
             <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)} className="input-field" required />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
               <select value={form.category} onChange={(e) => set("category", e.target.value)} className="select-field">
@@ -75,7 +75,7 @@ export default function NewOpportunityPage() {
               <input type="text" value={form.organization} onChange={(e) => set("organization", e.target.value)} className="input-field" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
               <input type="url" value={form.websiteUrl} onChange={(e) => set("websiteUrl", e.target.value)} className="input-field" />
@@ -89,7 +89,7 @@ export default function NewOpportunityPage() {
 
         <div className="card space-y-4">
           <h2 className="font-semibold text-lg">Status & Dates</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
               <select value={form.status} onChange={(e) => set("status", e.target.value)} className="select-field">
@@ -107,7 +107,7 @@ export default function NewOpportunityPage() {
               </select>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
               <input type="date" value={form.deadline} onChange={(e) => set("deadline", e.target.value)} className="input-field" />
@@ -157,7 +157,7 @@ export default function NewOpportunityPage() {
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button type="submit" disabled={saving} className="btn-primary">
             {saving ? "Saving..." : "Save Opportunity"}
           </button>

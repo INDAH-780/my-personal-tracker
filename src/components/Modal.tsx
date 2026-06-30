@@ -41,7 +41,7 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" />
       <div
         ref={contentRef}
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md animate-scale-in overflow-hidden"
+        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in"
       >
         <button
           onClick={onClose}

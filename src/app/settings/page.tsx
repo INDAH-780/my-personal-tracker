@@ -34,7 +34,7 @@ export default function SettingsPage() {
     <div className="max-w-2xl animate-fade-in">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold font-display">
+        <h1 className="text-2xl sm:text-3xl font-bold font-display">
           <span className="text-[#F9ABDF]">Settings</span>
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your account and preferences</p>

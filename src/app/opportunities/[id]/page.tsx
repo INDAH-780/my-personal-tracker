@@ -133,7 +133,7 @@ export default function OpportunityDetailPage() {
   return (
     <div className="max-w-4xl animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-2 text-sm text-[#F9ABDF] hover:text-[#e891c7] transition-colors font-medium"
@@ -192,7 +192,7 @@ export default function OpportunityDetailPage() {
                 className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
                 <select
@@ -223,7 +223,7 @@ export default function OpportunityDetailPage() {
             {form.status === "ACCEPTED" && (
               <div className="bg-green-50 border border-green-200 rounded-xl p-4 dark:bg-green-900/10 dark:border-green-800">
                 <h3 className="text-sm font-semibold text-green-700 dark:text-green-300 mb-3">Program Tracking</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Program Status</label>
                     <select
@@ -252,7 +252,7 @@ export default function OpportunityDetailPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Organization</label>
                 <input
@@ -275,7 +275,7 @@ export default function OpportunityDetailPage() {
                 </select>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Website URL</label>
                 <input
@@ -295,7 +295,7 @@ export default function OpportunityDetailPage() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Deadline</label>
                 <input
@@ -377,7 +377,7 @@ export default function OpportunityDetailPage() {
         ) : (
           <>
             {/* Title & Status */}
-            <div className="flex items-start justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
               <div>
                 <h1 className="text-3xl font-bold font-display text-[#F9ABDF]">{opp.name}</h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">{opp.organization}</p>
@@ -408,7 +408,7 @@ export default function OpportunityDetailPage() {
                   </svg>
                   Program Tracking
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Program Status</p>
                     <ProgramStatusBadge status={opp.programStatus || "NOT_STARTED"} />
@@ -510,7 +510,7 @@ export default function OpportunityDetailPage() {
             )}
 
             {/* Links */}
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               {opp.websiteUrl && (
                 <a
                   href={opp.websiteUrl}

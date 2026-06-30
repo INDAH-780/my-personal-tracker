@@ -127,3 +127,14 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #e891c7;
 }
+
+/* Hide scrollbar on mobile for horizontal scroll containers */
+@media (max-width: 1023px) {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -55,14 +55,14 @@ export default function DiaryPage() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-display">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display">
             <span className="text-[#F9ABDF]">Diary</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">{entries.length} entries</p>
         </div>
-        <Link href="/diary/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center gap-2">
+        <Link href="/diary/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center justify-center gap-2 text-sm sm:text-base">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -162,8 +162,8 @@ export default function DiaryPage() {
 
       {/* Sort Bar */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
+        <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-1">
+          <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">Sort by:</span>
           {[
             { value: "date", label: "Date" },
             { value: "title", label: "Title" },
@@ -176,7 +176,7 @@ export default function DiaryPage() {
                 if (sortBy === opt.value) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
                 else { setSortBy(opt.value); setSortOrder("asc"); }
               }}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-sm font-medium transition-colors shrink-0 ${
                 sortBy === opt.value
                   ? "text-[#F9ABDF]"
                   : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -218,8 +218,8 @@ export default function DiaryPage() {
           </div>
         ) : (
           <div className="divide-y divide-[#F9ABDF]/10 dark:divide-[#F9ABDF]/5">
-            {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/5 text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
+            {/* Desktop Table Header */}
+            <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/5 text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
               <div className="col-span-5">Entry</div>
               <div className="col-span-2">Type</div>
               <div className="col-span-2">Linked Opportunity</div>
@@ -229,42 +229,73 @@ export default function DiaryPage() {
 
             {/* Table Rows */}
             {entries.map((entry) => (
-              <Link
-                key={entry.id}
-                href={`/diary/${entry.id}`}
-                className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors items-center group"
-              >
-                <div className="col-span-5">
-                  <p className="font-semibold text-gray-900 group-hover:text-[#F9ABDF] transition-colors truncate dark:text-white">
-                    {entry.title}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{entry.content}</p>
-                </div>
-                <div className="col-span-2">
-                  <TypeBadge type={entry.type} />
-                </div>
-                <div className="col-span-2">
-                  {entry.opportunity ? (
-                    <span className="text-sm text-[#F9ABDF] truncate block">
-                      {entry.opportunity.name}
+              <div key={entry.id}>
+                {/* Desktop Row */}
+                <Link
+                  href={`/diary/${entry.id}`}
+                  className="hidden lg:grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors items-center group"
+                >
+                  <div className="col-span-5">
+                    <p className="font-semibold text-gray-900 group-hover:text-[#F9ABDF] transition-colors truncate dark:text-white">
+                      {entry.title}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{entry.content}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <TypeBadge type={entry.type} />
+                  </div>
+                  <div className="col-span-2">
+                    {entry.opportunity ? (
+                      <span className="text-sm text-[#F9ABDF] truncate block">
+                        {entry.opportunity.name}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-gray-300 dark:text-gray-600">—</span>
+                    )}
+                  </div>
+                  <div className="col-span-1">
+                    {entry.mood ? (
+                      <span className="text-lg">{["", "😟", "😕", "😐", "🙂", "😊"][entry.mood]}</span>
+                    ) : (
+                      <span className="text-sm text-gray-300 dark:text-gray-600">—</span>
+                    )}
+                  </div>
+                  <div className="col-span-2 text-right">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date(entry.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                     </span>
-                  ) : (
-                    <span className="text-sm text-gray-300 dark:text-gray-600">—</span>
-                  )}
-                </div>
-                <div className="col-span-1">
-                  {entry.mood ? (
-                    <span className="text-lg">{["", "😟", "😕", "😐", "🙂", "😊"][entry.mood]}</span>
-                  ) : (
-                    <span className="text-sm text-gray-300 dark:text-gray-600">—</span>
-                  )}
-                </div>
-                <div className="col-span-2 text-right">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(entry.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                  </span>
-                </div>
-              </Link>
+                  </div>
+                </Link>
+
+                {/* Mobile Card */}
+                <Link
+                  href={`/diary/${entry.id}`}
+                  className="lg:hidden p-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors block"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-gray-900 dark:text-white truncate">{entry.title}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{entry.content}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {entry.mood ? (
+                        <span className="text-base">{["", "😟", "😕", "😐", "🙂", "😊"][entry.mood]}</span>
+                      ) : null}
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(entry.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <TypeBadge type={entry.type} />
+                    {entry.opportunity && (
+                      <span className="text-xs text-[#F9ABDF] truncate">
+                        {entry.opportunity.name}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         )}

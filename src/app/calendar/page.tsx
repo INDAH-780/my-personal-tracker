@@ -60,9 +60,9 @@ export default function CalendarPage() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-display">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display">
             <span className="text-[#F9ABDF]">Calendar</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Track your deadlines and events</p>
@@ -85,14 +85,14 @@ export default function CalendarPage() {
       </div>
 
       {/* Calendar */}
-      <div className="bg-white rounded-2xl border border-[#F9ABDF]/20 shadow-sm overflow-hidden dark:bg-gray-900 dark:border-[#F9ABDF]/10">
+      <div className="bg-white rounded-2xl border border-[#F9ABDF]/20 shadow-sm overflow-x-auto dark:bg-gray-900 dark:border-[#F9ABDF]/10">
         {/* Month Header */}
         <div className="p-4 border-b border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10">
-          <h2 className="text-xl font-semibold text-center font-display">{monthName} {year}</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-center font-display">{monthName} {year}</h2>
         </div>
 
         {/* Day Headers */}
-        <div className="grid grid-cols-7 border-b border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10">
+        <div className="grid grid-cols-7 border-b border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10 min-w-[560px]">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
             <div key={d} className="p-2 text-center text-xs font-semibold text-gray-500 bg-[#F9ABDF]/5 dark:bg-[#F9ABDF]/5 dark:text-gray-400 uppercase tracking-wider">
               {d}
@@ -101,9 +101,9 @@ export default function CalendarPage() {
         </div>
 
         {/* Calendar Grid */}
-        <div className="grid grid-cols-7">
+        <div className="grid grid-cols-7 min-w-[560px]">
           {blanks.map((b) => (
-            <div key={`b-${b}`} className="min-h-[100px] border-b border-r border-[#F9ABDF]/10 dark:border-[#F9ABDF]/5 bg-gray-50/50 dark:bg-gray-800/30"></div>
+            <div key={`b-${b}`} className="min-h-[60px] sm:min-h-[100px] border-b border-r border-[#F9ABDF]/10 dark:border-[#F9ABDF]/5 bg-gray-50/50 dark:bg-gray-800/30"></div>
           ))}
           {days.map((day) => {
             const events = getEventsForDay(day);
@@ -111,7 +111,7 @@ export default function CalendarPage() {
             return (
               <div
                 key={day}
-                className={`min-h-[100px] border-b border-r border-[#F9ABDF]/10 dark:border-[#F9ABDF]/5 p-1 transition-colors ${
+                className={`min-h-[60px] sm:min-h-[100px] border-b border-r border-[#F9ABDF]/10 dark:border-[#F9ABDF]/5 p-1 transition-colors ${
                   isToday
                     ? "bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/10"
                     : "hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5"
@@ -125,17 +125,21 @@ export default function CalendarPage() {
                   {day}
                 </div>
                 <div className="space-y-0.5">
-                  {events.slice(0, 3).map((e, i) => (
+                  {events.slice(0, 2).map((e, i) => (
                     <Link
                       key={i}
                       href={e.href}
                       className={`block text-[10px] px-1.5 py-0.5 rounded truncate font-medium ${e.color} hover:opacity-80 transition-opacity`}
                     >
-                      {e.label}
+                      <span className="hidden sm:inline">{e.label}</span>
+                      <span className="sm:hidden">&bull;</span>
                     </Link>
                   ))}
-                  {events.length > 3 && (
-                    <p className="text-[10px] text-[#F9ABDF] font-medium">+{events.length - 3} more</p>
+                  {events.length > 2 && (
+                    <p className="text-[10px] text-[#F9ABDF] font-medium hidden sm:block">+{events.length - 2} more</p>
+                  )}
+                  {events.length > 0 && (
+                    <p className="text-[10px] text-[#F9ABDF] font-medium sm:hidden">{events.length} event{events.length > 1 ? "s" : ""}</p>
                   )}
                 </div>
               </div>
