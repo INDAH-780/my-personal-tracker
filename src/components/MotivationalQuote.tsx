@@ -44,6 +44,14 @@ const FALLBACK_QUOTES: Quote[] = [
   { quote: "The greatest leader is not the one who does the greatest things, but the one who gets people to do the greatest things.", author: "Ronald Reagan" },
   { quote: "Opportunity is missed by most people because it is dressed in overalls and looks like work.", author: "Thomas Edison" },
   { quote: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill" },
+  { quote: "You are capable of more than you know. Keep going.", author: "Unknown" },
+  { quote: "Your potential is limitless. Don't let doubt hold you back.", author: "Unknown" },
+  { quote: "Every step forward, no matter how small, is progress.", author: "Unknown" },
+  { quote: "You are building something amazing, one day at a time.", author: "Unknown" },
+  { quote: "Be proud of how hard you are trying.", author: "Unknown" },
+  { quote: "You are stronger than you think and more capable than you imagine.", author: "Unknown" },
+  { quote: "Keep pushing. Your breakthrough is closer than you think.", author: "Unknown" },
+  { quote: "The world needs what you have to offer. Don't hold back.", author: "Unknown" },
 ];
 
 const SHOW_DURATION = 60 * 1000;
