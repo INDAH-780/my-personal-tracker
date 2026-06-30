@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { STATUS_LABELS, STATUS_COLORS, CATEGORY_LABELS } from "@/lib/constants";
+import AffirmationBanner from "@/components/AffirmationBanner";
 
 interface Stats {
   totalOpps: number;
@@ -54,6 +55,7 @@ export default function DashboardPage() {
             <span className="text-[#F9ABDF]">Dashboard</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Welcome back! Here&apos;s your overview.</p>
+          <AffirmationBanner />
         </div>
         <Link href="/opportunities/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center justify-center gap-2 text-sm sm:text-base">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import MotivationalQuote from "@/components/MotivationalQuote";
-import AffirmationBanner from "@/components/AffirmationBanner";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -53,7 +52,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </svg>
           </button>
         </div>
-        <AffirmationBanner />
         <div className="p-4 lg:p-8">
           {children}
         </div>

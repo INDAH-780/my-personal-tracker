@@ -10,7 +10,7 @@ export async function GET() {
   const user = await prisma.user.findUnique({ where: { email: session.user.email } });
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-  const [totalOpps, statusCounts, categoryCounts, fundingCounts, regionCounts, recentOpps, upcomingDeadlines, diaryCount, diaryTypeCounts] = await Promise.all([
+  const [totalOpps, statusCounts, categoryCounts, fundingCounts, regionCounts, recentOpps, upcomingDeadlines, diaryCount, diaryTypeCounts, courseCount, scholarshipCount] = await Promise.all([
     prisma.opportunity.count({ where: { userId: user.id } }),
     prisma.opportunity.groupBy({ by: ["status"], where: { userId: user.id }, _count: true }),
     prisma.opportunity.groupBy({ by: ["category"], where: { userId: user.id }, _count: true }),
@@ -20,6 +20,8 @@ export async function GET() {
     prisma.opportunity.findMany({ where: { userId: user.id, deadline: { gte: new Date() } }, orderBy: { deadline: "asc" }, take: 5 }),
     prisma.diaryEntry.count({ where: { userId: user.id } }),
     prisma.diaryEntry.groupBy({ by: ["type"], where: { userId: user.id }, _count: true }),
+    prisma.course.count({ where: { userId: user.id } }),
+    prisma.scholarship.count({ where: { userId: user.id } }),
   ]);
 
   return NextResponse.json({
@@ -32,5 +34,7 @@ export async function GET() {
     upcomingDeadlines,
     diaryCount,
     diaryTypeCounts: diaryTypeCounts.map((d) => ({ type: d.type, count: d._count })),
+    courseCount,
+    scholarshipCount,
   });
 }

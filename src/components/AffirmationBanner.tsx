@@ -35,7 +35,7 @@ const AFFIRMATIONS = [
   "You are one decision away from a completely different life.",
 ];
 
-const CYCLE_INTERVAL = 8000;
+const CYCLE_INTERVAL = 20000;
 
 export default function AffirmationBanner() {
   const [index, setIndex] = useState(0);
@@ -47,23 +47,19 @@ export default function AffirmationBanner() {
       setTimeout(() => {
         setIndex((prev) => (prev + 1) % AFFIRMATIONS.length);
         setFading(false);
-      }, 500);
+      }, 800);
     }, CYCLE_INTERVAL);
 
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="bg-gradient-to-r from-[#F9ABDF]/10 via-[#F9ABDF]/5 to-[#F9ABDF]/10 border-b border-[#F9ABDF]/10 dark:from-[#F9ABDF]/5 dark:via-transparent dark:to-[#F9ABDF]/5 dark:border-[#F9ABDF]/5">
-      <div className="px-4 lg:px-8 py-2.5 text-center">
-        <p
-          className={`text-sm font-medium text-gray-600 dark:text-gray-400 transition-opacity duration-500 ${
-            fading ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          {AFFIRMATIONS[index]}
-        </p>
-      </div>
-    </div>
+    <p
+      className={`text-sm text-gray-400 dark:text-gray-500 italic mt-1.5 transition-opacity duration-800 ${
+        fading ? "opacity-0" : "opacity-100"
+      }`}
+    >
+      {AFFIRMATIONS[index]}
+    </p>
   );
 }
