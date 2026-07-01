@@ -157,6 +157,8 @@ model Scholarship {
   url             String?
   status          String   @default("WISHLIST")
   amount          String?
+  major           String?
+  minor           String?
   deadline        DateTime?
   startDate       DateTime?
   endDate         DateTime?

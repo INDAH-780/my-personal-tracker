@@ -254,6 +254,16 @@ export default function ScholarshipDetailPage() {
                 <input type="url" value={form.url || ""} onChange={(e) => set("url", e.target.value)} className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white" />
               </div>
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Major</label>
+                <input type="text" value={form.major || ""} onChange={(e) => set("major", e.target.value)} placeholder="e.g. Computer Science" className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Minor</label>
+                <input type="text" value={form.minor || ""} onChange={(e) => set("minor", e.target.value)} placeholder="e.g. Data Science" className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white" />
+              </div>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Deadline</label>
@@ -295,9 +305,9 @@ export default function ScholarshipDetailPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
               <InfoCard label="Amount" value={scholarship.amount || "—"} />
+              <InfoCard label="Major" value={scholarship.major || "—"} />
+              <InfoCard label="Minor" value={scholarship.minor || "—"} />
               <InfoCard label="Deadline" value={scholarship.deadline ? new Date(scholarship.deadline).toLocaleDateString() : "—"} highlight={scholarship.deadline && isUpcoming(scholarship.deadline)} />
-              <InfoCard label="Start Date" value={scholarship.startDate ? new Date(scholarship.startDate).toLocaleDateString() : "—"} />
-              <InfoCard label="End Date" value={scholarship.endDate ? new Date(scholarship.endDate).toLocaleDateString() : "—"} />
             </div>
 
             {scholarship.requirements && (

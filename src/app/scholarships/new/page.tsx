@@ -13,6 +13,8 @@ export default function NewScholarshipPage() {
     url: "",
     status: "WISHLIST",
     amount: "",
+    major: "",
+    minor: "",
     deadline: "",
     startDate: "",
     endDate: "",
@@ -87,6 +89,28 @@ export default function NewScholarshipPage() {
                   onChange={(e) => set("amount", e.target.value)}
                   className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
                   placeholder="e.g., Full Tuition, $10,000"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Major</label>
+                <input
+                  type="text"
+                  value={form.major}
+                  onChange={(e) => set("major", e.target.value)}
+                  className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
+                  placeholder="e.g., Computer Science"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Minor</label>
+                <input
+                  type="text"
+                  value={form.minor}
+                  onChange={(e) => set("minor", e.target.value)}
+                  className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
+                  placeholder="e.g., Data Science"
                 />
               </div>
             </div>
