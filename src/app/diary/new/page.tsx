@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DIARY_TYPE_LABELS, TAGS, type DiaryEntryType } from "@/lib/constants";
+import { DIARY_TYPE_LABELS, type DiaryEntryType } from "@/lib/constants";
 
 const BIBLE_VERSES = [
   { text: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.", ref: "Jeremiah 29:11" },
@@ -34,7 +34,6 @@ export default function NewDiaryEntryPage() {
     content: "",
     linkedOppId: "",
     mood: 0,
-    tags: [] as string[],
   });
 
   useEffect(() => {
@@ -44,10 +43,6 @@ export default function NewDiaryEntryPage() {
   }, []);
 
   const set = (field: string, value: string | string[] | number) => setForm({ ...form, [field]: value });
-
-  const toggleTag = (tag: string) => {
-    setForm({ ...form, tags: form.tags.includes(tag) ? form.tags.filter((t) => t !== tag) : [...form.tags, tag] });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,27 +252,6 @@ export default function NewDiaryEntryPage() {
               </div>
             </div>
 
-            {/* Tags */}
-            <div>
-              <label
-                className="block mb-3 text-xs uppercase tracking-[0.1em]"
-                style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
-              >
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {TAGS.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => toggleTag(tag)}
-                    className={`diary-tag ${form.tags.includes(tag) ? "active" : ""}`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Actions */}

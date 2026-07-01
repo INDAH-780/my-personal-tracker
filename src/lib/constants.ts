@@ -215,6 +215,7 @@ export const TAGS = [
   "Leadership",
   "Entrepreneurship",
   "Technical Writing",
+  "Mentorship",
   "Women",
   "Youth",
   "Beginner Friendly",

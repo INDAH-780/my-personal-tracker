@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { DIARY_TYPE_LABELS, TAGS, type DiaryEntryType } from "@/lib/constants";
+import { DIARY_TYPE_LABELS, type DiaryEntryType } from "@/lib/constants";
 
 const BIBLE_VERSES = [
   { text: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.", ref: "Jeremiah 29:11" },
@@ -55,7 +55,6 @@ export default function DiaryDetailPage() {
         setForm({
           ...data,
           date: data.date ? data.date.split("T")[0] : "",
-          tags: data.tags ? data.tags.split(",") : [],
           linkedOppId: data.linkedOppId || "",
         });
         setLoading(false);
@@ -86,13 +85,6 @@ export default function DiaryDetailPage() {
     if (!confirm("Are you sure you want to delete this diary entry? This cannot be undone.")) return;
     await fetch(`/api/diary/${id}`, { method: "DELETE" });
     router.push("/diary");
-  };
-
-  const toggleTag = (tag: string) => {
-    setForm({
-      ...form,
-      tags: form.tags.includes(tag) ? form.tags.filter((t: string) => t !== tag) : [...form.tags, tag],
-    });
   };
 
   const verse = BIBLE_VERSES[currentVerse];
@@ -347,27 +339,6 @@ export default function DiaryDetailPage() {
               </div>
             </div>
 
-            {/* Tags */}
-            <div>
-              <label
-                className="block mb-3 text-xs uppercase tracking-[0.1em]"
-                style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
-              >
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {TAGS.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => toggleTag(tag)}
-                    className={`diary-tag ${form.tags?.includes(tag) ? "active" : ""}`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         ) : (
           /* READ MODE */
@@ -462,21 +433,6 @@ export default function DiaryDetailPage() {
                 >
                   {["", "Heartbroken", "Down", "Okay", "Good", "Amazing"][entry.mood]}
                 </span>
-              </div>
-            )}
-
-            {/* Tags */}
-            {entry.tags && entry.tags.split(",").filter(Boolean).length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4">
-                {entry.tags.split(",").filter(Boolean).map((tag: string) => (
-                  <span
-                    key={tag}
-                    className="diary-tag"
-                    style={{ cursor: "default" }}
-                  >
-                    {tag.trim()}
-                  </span>
-                ))}
               </div>
             )}
 
