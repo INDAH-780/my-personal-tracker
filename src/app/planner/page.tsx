@@ -86,6 +86,13 @@ export default function PlannerPage() {
   const [saving, setSaving] = useState(false);
   const [currentVerse] = useState(Math.floor(Math.random() * BIBLE_VERSES.length));
 
+  const [editingPlan, setEditingPlan] = useState(false);
+  const [editPlanForm, setEditPlanForm] = useState({
+    title: "",
+    duration: "MONTHLY",
+    startDate: "",
+    vision: "",
+  });
   const [planForm, setPlanForm] = useState({
     title: "",
     duration: "MONTHLY",
@@ -221,6 +228,40 @@ export default function PlannerPage() {
     await fetch(`/api/plans/${selectedPlan.id}`, { method: "DELETE" });
     setSelectedPlan(null);
     fetchPlans();
+  };
+
+  const startEditPlan = () => {
+    setEditPlanForm({
+      title: selectedPlan.title,
+      duration: selectedPlan.type,
+      startDate: selectedPlan.startDate.split("T")[0],
+      vision: selectedPlan.vision || "",
+    });
+    setEditingPlan(true);
+  };
+
+  const handleSavePlanEdit = async () => {
+    if (!editPlanForm.title.trim() || !selectedPlan) return;
+    setSaving(true);
+    const endDate = getEndDate(editPlanForm.startDate, editPlanForm.duration);
+    const res = await fetch(`/api/plans/${selectedPlan.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: editPlanForm.title,
+        type: editPlanForm.duration,
+        startDate: editPlanForm.startDate,
+        endDate,
+        vision: editPlanForm.vision || null,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setSelectedPlan(data);
+      setEditingPlan(false);
+      fetchPlans();
+    }
+    setSaving(false);
   };
 
   const startEditGoal = (goal: any) => {
@@ -443,8 +484,17 @@ export default function PlannerPage() {
                   {getDurationLabel(selectedPlan.type)} Plan
                 </span>
 
-                {/* Edit & Delete buttons */}
-                <div className="flex gap-2 mb-4">
+                {/* Edit, Add Goal & Delete buttons */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <button
+                    onClick={startEditPlan}
+                    className="diary-btn-outline text-[10px] py-1.5 px-4 inline-flex items-center gap-1.5"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
+                    Edit Plan
+                  </button>
                   <button
                     onClick={() => { setShowGoalForm(true); setEditingGoal(null); setGoalForm({ title: "", description: "", tasks: "" }); }}
                     className="diary-btn-outline text-[10px] py-1.5 px-4 inline-flex items-center gap-1.5"
@@ -472,6 +522,76 @@ export default function PlannerPage() {
                 </div>
               </div>
 
+              {/* ── Edit Plan Form ── */}
+              {editingPlan && (
+                <div className="relative z-10 mt-6 space-y-4">
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-[0.1em] mb-1.5" style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}>
+                      Plan Title
+                    </label>
+                    <input
+                      type="text"
+                      value={editPlanForm.title}
+                      onChange={(e) => setEditPlanForm({ ...editPlanForm, title: e.target.value })}
+                      className="diary-input"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-[0.1em] mb-1.5" style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}>
+                        Duration
+                      </label>
+                      <select
+                        value={editPlanForm.duration}
+                        onChange={(e) => setEditPlanForm({ ...editPlanForm, duration: e.target.value })}
+                        className="diary-select w-full"
+                      >
+                        {DURATION_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-[0.1em] mb-1.5" style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}>
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        value={editPlanForm.startDate}
+                        onChange={(e) => setEditPlanForm({ ...editPlanForm, startDate: e.target.value })}
+                        className="diary-input text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-[0.1em] mb-1.5" style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}>
+                      Vision / Big Picture
+                    </label>
+                    <textarea
+                      value={editPlanForm.vision}
+                      onChange={(e) => setEditPlanForm({ ...editPlanForm, vision: e.target.value })}
+                      placeholder={"Write your vision here. Use bullet points:\n- Goal 1\n- Goal 2\n- Goal 3"}
+                      className="diary-textarea"
+                      rows={5}
+                    />
+                  </div>
+
+                  <div className="flex gap-2 pt-1">
+                    <button onClick={handleSavePlanEdit} disabled={saving || !editPlanForm.title.trim()} className="diary-btn text-xs disabled:opacity-50">
+                      {saving ? "Saving..." : "Save Changes"}
+                    </button>
+                    <button onClick={() => setEditingPlan(false)} className="diary-btn-outline text-xs">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Read Mode ── */}
+              {!editingPlan && (
+              <>
               {/* ── Vision (rendered with bullets) ── */}
               {selectedPlan.vision && (
                 <div className="relative z-10 mt-6 mb-6">
@@ -698,6 +818,8 @@ export default function PlannerPage() {
                   </div>
                 )}
               </div>
+              </>
+              )}
 
               {/* Ink blots */}
               <div className="ink-blot" style={{ bottom: "2rem", right: "3rem" }} />
