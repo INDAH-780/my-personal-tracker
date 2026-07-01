@@ -233,6 +233,41 @@ export const RESEARCH_CATEGORY_ICONS: Record<ResearchCategory, string> = {
   GENERAL: "📝",
 };
 
+export type PlanType =
+  | "WEEKLY"
+  | "MONTHLY"
+  | "QUARTERLY"
+  | "SEMI_ANNUAL"
+  | "ANNUAL";
+
+export const PLAN_TYPE_LABELS: Record<PlanType, string> = {
+  WEEKLY: "This Week",
+  MONTHLY: "This Month",
+  QUARTERLY: "3 Months",
+  SEMI_ANNUAL: "6 Months",
+  ANNUAL: "This Year",
+};
+
+export const PLAN_TYPE_ICONS: Record<PlanType, string> = {
+  WEEKLY: "📅",
+  MONTHLY: "🗓️",
+  QUARTERLY: "📆",
+  SEMI_ANNUAL: "📌",
+  ANNUAL: "✨",
+};
+
+export const GOAL_STATUS_LABELS: Record<string, string> = {
+  NOT_STARTED: "Not Started",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+};
+
+export const GOAL_STATUS_COLORS: Record<string, string> = {
+  NOT_STARTED: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  IN_PROGRESS: "bg-[#F9ABDF]/20 text-gray-700 dark:text-gray-300",
+  COMPLETED: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+};
+
 export const TAGS = [
   "AI / Machine Learning",
   "Healthcare AI",
