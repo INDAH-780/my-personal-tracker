@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useState, useCallback, type MouseEvent as ReactMouseEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -21,7 +21,7 @@ export default function ScholarshipsPage() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
 
-  const fetchScholarships = () => {
+  const fetchScholarships = useCallback(() => {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (statuses.length) params.set("status", statuses.join(","));
@@ -38,11 +38,11 @@ export default function ScholarshipsPage() {
         setScholarships([]);
         setLoading(false);
       });
-  };
+  }, [search, statuses, sortBy, sortOrder]);
 
   useEffect(() => {
     fetchScholarships();
-  }, [statuses, sortBy, sortOrder]);
+  }, [fetchScholarships]);
 
   const toggleFilter = (arr: string[], setArr: (v: string[]) => void, value: string) => {
     setArr(arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value]);

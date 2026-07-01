@@ -440,7 +440,7 @@ export default function PlannerPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="diary-date-stamp text-[9px] uppercase tracking-[0.12em] opacity-50 mb-1">
-                      {PLAN_TYPE_LABELS[selectedPlan.type]} Plan
+                      {PLAN_TYPE_LABELS[selectedPlan.type as PlanType]} Plan
                     </p>
                     <h2 className="diary-heading text-2xl font-bold">{selectedPlan.title}</h2>
                     <p className="text-xs mt-1" style={{ color: "var(--diary-ink-light)" }}>
