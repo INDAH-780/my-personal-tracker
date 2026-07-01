@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { GOAL_STATUS_LABELS, GOAL_STATUS_COLORS, type PlanType } from "@/lib/constants";
+import { GOAL_STATUS_LABELS, GOAL_STATUS_COLORS } from "@/lib/constants";
 
 const DURATION_OPTIONS = [
   { value: "WEEKLY", label: "1 Week", days: 7 },
@@ -37,8 +37,43 @@ function SpiralBinding() {
   );
 }
 
+function FloralCorner({ className }: { className: string }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 90 C20 70, 40 50, 60 35 C70 28, 80 20, 85 10" stroke="#e8a0b8" strokeWidth="1" fill="none" opacity="0.5" />
+      <path d="M15 85 C25 65, 45 45, 55 35" stroke="#f9abdf" strokeWidth="0.8" fill="none" opacity="0.4" />
+      <circle cx="60" cy="35" r="4" fill="#f9abdf" opacity="0.3" />
+      <circle cx="85" cy="10" r="3" fill="#e8a0b8" opacity="0.3" />
+      <circle cx="40" cy="55" r="2.5" fill="#c9a96e" opacity="0.2" />
+    </svg>
+  );
+}
+
 function getDurationLabel(type: string) {
   return DURATION_OPTIONS.find((d) => d.value === type)?.label || type;
+}
+
+function renderTextWithBullets(text: string) {
+  if (!text) return null;
+  const lines = text.split("\n");
+  const hasBullets = lines.some((l) => /^\s*[-•*]\s/.test(l));
+  if (hasBullets) {
+    return (
+      <ul className="space-y-1.5">
+        {lines.map((line, i) => {
+          const cleaned = line.replace(/^\s*[-•*]\s*/, "").trim();
+          if (!cleaned) return null;
+          return (
+            <li key={i} className="flex items-start gap-2">
+              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#F9ABDF] shrink-0" />
+              <span>{cleaned}</span>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+  return <span className="whitespace-pre-wrap">{text}</span>;
 }
 
 export default function PlannerPage() {
@@ -199,7 +234,6 @@ export default function PlannerPage() {
     : 0;
 
   const verse = BIBLE_VERSES[currentVerse];
-
   const formatDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
   return (
@@ -240,7 +274,7 @@ export default function PlannerPage() {
                   return (
                     <button
                       key={plan.id}
-                      onClick={() => { setSelectedPlan(plan); setShowCreateForm(false); }}
+                      onClick={() => { setSelectedPlan(plan); setShowCreateForm(false); setShowGoalForm(false); setEditingGoal(null); }}
                       className={`w-full text-left p-3 rounded-xl transition-all ${
                         selectedPlan?.id === plan.id
                           ? "bg-[#F9ABDF]/20 border border-[#F9ABDF]/30"
@@ -275,8 +309,7 @@ export default function PlannerPage() {
               style={{ color: "var(--diary-rose-deep)", fontFamily: "var(--font-diary-heading), serif" }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
               </svg>
               Create New Plan
             </button>
@@ -295,7 +328,7 @@ export default function PlannerPage() {
 
         {/* Main Content Area */}
         <div>
-          {/* Create Plan Form */}
+          {/* ═══ CREATE PLAN FORM ═══ */}
           {showCreateForm && (
             <div className="notepad-card diary-paper relative pl-8 sm:pl-12 pr-4 sm:pr-6 py-6 mb-6">
               <SpiralBinding />
@@ -354,9 +387,9 @@ export default function PlannerPage() {
                     <textarea
                       value={planForm.vision}
                       onChange={(e) => setPlanForm({ ...planForm, vision: e.target.value })}
-                      placeholder="What does success look like for this period?"
+                      placeholder={"Write your vision here. Use bullet points:\n- Goal 1\n- Goal 2\n- Goal 3"}
                       className="diary-textarea"
-                      rows={3}
+                      rows={4}
                     />
                   </div>
 
@@ -373,100 +406,140 @@ export default function PlannerPage() {
             </div>
           )}
 
-          {/* Selected Plan View */}
+          {/* ═══ SELECTED PLAN — DIARY ENTRY STYLE ═══ */}
           {selectedPlan && !showCreateForm && (
-            <div className="notepad-card diary-paper relative pl-8 sm:pl-12 pr-4 sm:pr-6 py-6">
+            <div className="notepad-card diary-paper relative pl-8 sm:pl-12 pr-4 sm:pr-6 py-8 sm:py-10">
               <SpiralBinding />
               <div className="washi-tape washi-tape-top" />
               <div className="ribbon-bookmark" />
+              <FloralCorner className="floral-corner floral-corner-tl" />
+              <FloralCorner className="floral-corner floral-corner-br" />
 
-              {/* Plan Header */}
-              <div className="relative z-10 mb-6">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="diary-date-stamp text-[9px] uppercase tracking-[0.12em] opacity-50 mb-1">
-                      {getDurationLabel(selectedPlan.type)} Plan
-                    </p>
-                    <h2 className="diary-heading text-2xl font-bold">{selectedPlan.title}</h2>
-                    <p className="text-xs mt-1" style={{ color: "var(--diary-ink-light)" }}>
-                      {formatDate(selectedPlan.startDate)} — {formatDate(selectedPlan.endDate)}
-                    </p>
-                  </div>
+              {/* Bible verse top right */}
+              <div className="verse-container">
+                <p className="verse-text">&ldquo;{verse.text}&rdquo;</p>
+                <p className="verse-reference">&mdash; {verse.ref}</p>
+              </div>
+
+              {/* ── Plan Header (diary entry style) ── */}
+              <div className="relative z-10">
+                <p className="diary-date-stamp text-[10px] uppercase tracking-[0.15em] opacity-60 mb-2">
+                  {formatDate(selectedPlan.startDate)} — {formatDate(selectedPlan.endDate)}
+                </p>
+
+                <h1 className="diary-heading text-2xl sm:text-3xl font-bold mb-2">
+                  {selectedPlan.title}
+                </h1>
+
+                <span
+                  className="inline-block text-[10px] px-3 py-0.5 rounded-full mb-6"
+                  style={{
+                    background: "var(--diary-blush)",
+                    color: "var(--diary-rose-deep)",
+                    fontFamily: "var(--font-diary-heading), serif",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  {getDurationLabel(selectedPlan.type)} Plan
+                </span>
+
+                {/* Edit & Delete buttons */}
+                <div className="flex gap-2 mb-4">
+                  <button
+                    onClick={() => { setShowGoalForm(true); setEditingGoal(null); setGoalForm({ title: "", description: "", tasks: "" }); }}
+                    className="diary-btn-outline text-[10px] py-1.5 px-4 inline-flex items-center gap-1.5"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Add Goal
+                  </button>
                   <button
                     onClick={handleDeletePlan}
-                    className="p-2 rounded-lg hover:bg-red-50 transition-colors text-gray-400 hover:text-red-500 dark:hover:bg-red-900/20"
-                    title="Delete plan"
+                    className="text-[10px] py-1.5 px-4 rounded-full border transition-all hover:bg-red-50 inline-flex items-center gap-1.5"
+                    style={{ color: "#c0392b", borderColor: "rgba(192, 57, 43, 0.3)" }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <polyline points="3 6 5 6 21 6" />
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                     </svg>
+                    Delete Plan
                   </button>
                 </div>
 
-                {selectedPlan.vision && (
-                  <div className="mt-3 p-3 rounded-xl" style={{ background: "rgba(248,232,238,0.4)", border: "1px dashed var(--diary-rose)" }}>
-                    <p className="text-[9px] uppercase tracking-[0.1em] mb-1" style={{ color: "var(--diary-rose-deep)", fontFamily: "var(--font-diary-heading), serif" }}>
-                      Vision
-                    </p>
-                    <p className="text-sm italic" style={{ color: "var(--diary-ink)" }}>{selectedPlan.vision}</p>
-                  </div>
-                )}
-
-                {selectedPlan.goals?.length > 0 && (
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] uppercase tracking-[0.1em]" style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}>
-                        Overall Progress
-                      </span>
-                      <span className="text-sm font-bold" style={{ color: "var(--diary-rose-deep)" }}>
-                        {overallProgress}%
-                      </span>
-                    </div>
-                    <div className="h-3 rounded-full bg-[#F9ABDF]/15 overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{ width: `${overallProgress}%`, background: "linear-gradient(90deg, var(--diary-rose), var(--diary-rose-deep))" }}
-                      />
-                    </div>
-                    <p className="text-[9px] mt-1" style={{ color: "var(--diary-ink-light)" }}>
-                      {selectedPlan.goals.filter((g: any) => g.status === "COMPLETED").length} of {selectedPlan.goals.length} goals completed
-                    </p>
-                  </div>
-                )}
+                <div className="diary-divider">
+                  <span className="diary-divider-icon">&#10047;</span>
+                </div>
               </div>
+
+              {/* ── Vision (rendered with bullets) ── */}
+              {selectedPlan.vision && (
+                <div className="relative z-10 mt-6 mb-6">
+                  <p
+                    className="text-[10px] uppercase tracking-[0.1em] mb-2"
+                    style={{ color: "var(--diary-rose-deep)", fontFamily: "var(--font-diary-heading), serif" }}
+                  >
+                    Vision
+                  </p>
+                  <div
+                    className="diary-handwritten leading-[2.85rem]"
+                    style={{ color: "var(--diary-ink)" }}
+                  >
+                    {renderTextWithBullets(selectedPlan.vision)}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Overall Progress ── */}
+              {selectedPlan.goals?.length > 0 && (
+                <div className="relative z-10 mb-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      className="text-[10px] uppercase tracking-[0.1em]"
+                      style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
+                    >
+                      Overall Progress
+                    </span>
+                    <span className="text-sm font-bold" style={{ color: "var(--diary-rose-deep)" }}>
+                      {overallProgress}%
+                    </span>
+                  </div>
+                  <div className="h-3 rounded-full bg-[#F9ABDF]/15 overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${overallProgress}%`, background: "linear-gradient(90deg, var(--diary-rose), var(--diary-rose-deep))" }}
+                    />
+                  </div>
+                  <p className="text-[9px] mt-1" style={{ color: "var(--diary-ink-light)" }}>
+                    {selectedPlan.goals.filter((g: any) => g.status === "COMPLETED").length} of {selectedPlan.goals.length} goals completed
+                  </p>
+                </div>
+              )}
 
               <div className="diary-divider relative z-10">
                 <span className="diary-divider-icon">&#10048;</span>
               </div>
 
-              {/* Goals */}
-              <div className="relative z-10 mt-4 space-y-4">
+              {/* ── Goals ── */}
+              <div className="relative z-10 mt-6 space-y-5">
                 {selectedPlan.goals?.map((goal: any) => {
                   const tasks = goal.tasks ? JSON.parse(goal.tasks) : [];
                   const completedTasks = tasks.filter((t: any) => t.done).length;
                   return (
-                    <div
-                      key={goal.id}
-                      className="p-4 rounded-xl transition-all"
-                      style={{
-                        background: goal.status === "COMPLETED" ? "rgba(220,252,231,0.3)" : "rgba(248,232,238,0.2)",
-                        border: goal.status === "COMPLETED" ? "1px solid rgba(34,197,94,0.2)" : "1px dashed var(--diary-rose)",
-                      }}
-                    >
+                    <div key={goal.id} className="mb-6">
+                      {/* Goal header */}
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h4 className={`font-semibold text-sm ${goal.status === "COMPLETED" ? "line-through opacity-60" : ""}`} style={{ color: "var(--diary-ink)" }}>
+                            <h3
+                              className={`diary-heading text-lg font-bold ${goal.status === "COMPLETED" ? "line-through opacity-50" : ""}`}
+                            >
                               {goal.title}
-                            </h4>
+                            </h3>
                             <span className={`text-[9px] px-2 py-0.5 rounded-full font-medium ${GOAL_STATUS_COLORS[goal.status]}`}>
                               {GOAL_STATUS_LABELS[goal.status]}
                             </span>
                           </div>
-                          {goal.description && (
-                            <p className="text-xs italic" style={{ color: "var(--diary-ink-light)" }}>{goal.description}</p>
-                          )}
                         </div>
                         <div className="flex gap-1 shrink-0">
                           <button onClick={() => startEditGoal(goal)} className="p-1.5 rounded-lg hover:bg-[#F9ABDF]/10 transition-colors text-gray-400 hover:text-[#F9ABDF]">
@@ -482,8 +555,18 @@ export default function PlannerPage() {
                         </div>
                       </div>
 
-                      {/* Progress bar */}
-                      <div className="mb-2">
+                      {/* Goal description with bullets */}
+                      {goal.description && (
+                        <div
+                          className="diary-handwritten text-sm mb-3 leading-[2rem]"
+                          style={{ color: "var(--diary-ink-light)" }}
+                        >
+                          {renderTextWithBullets(goal.description)}
+                        </div>
+                      )}
+
+                      {/* Progress bar with quick-set buttons */}
+                      <div className="mb-3">
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex gap-1">
                             {[0, 25, 50, 75, 100].map((val) => (
@@ -513,25 +596,36 @@ export default function PlannerPage() {
 
                       {/* Tasks checklist */}
                       {tasks.length > 0 && (
-                        <div className="space-y-1.5 mt-3">
-                          {tasks.map((task: any, i: number) => (
-                            <button key={i} onClick={() => handleToggleTask(goal, i)} className="w-full flex items-center gap-2.5 text-left group">
-                              <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all flex-shrink-0 ${
-                                task.done ? "bg-green-400 border-green-400" : "border-[#F9ABDF]/40 group-hover:border-[#F9ABDF]"
-                              }`}>
-                                {task.done && (
-                                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                                    <polyline points="20 6 9 17 4 12" />
-                                  </svg>
-                                )}
-                              </div>
-                              <span className={`text-xs ${task.done ? "line-through opacity-50" : ""}`} style={{ color: "var(--diary-ink)" }}>
-                                {task.text}
-                              </span>
-                            </button>
-                          ))}
-                          <p className="text-[9px] mt-1" style={{ color: "var(--diary-ink-light)" }}>
-                            {completedTasks}/{tasks.length} tasks done
+                        <div
+                          className="p-3 rounded-lg"
+                          style={{ background: "rgba(248,232,238,0.15)", border: "1px dashed rgba(200,160,180,0.2)" }}
+                        >
+                          <p
+                            className="text-[9px] uppercase tracking-[0.1em] mb-2"
+                            style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
+                          >
+                            Tasks
+                          </p>
+                          <div className="space-y-1.5">
+                            {tasks.map((task: any, i: number) => (
+                              <button key={i} onClick={() => handleToggleTask(goal, i)} className="w-full flex items-center gap-2.5 text-left group">
+                                <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all flex-shrink-0 ${
+                                  task.done ? "bg-green-400 border-green-400" : "border-[#F9ABDF]/40 group-hover:border-[#F9ABDF]"
+                                }`}>
+                                  {task.done && (
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                                      <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                  )}
+                                </div>
+                                <span className={`text-xs ${task.done ? "line-through opacity-50" : ""}`} style={{ color: "var(--diary-ink)" }}>
+                                  {task.text}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                          <p className="text-[9px] mt-2" style={{ color: "var(--diary-ink-light)" }}>
+                            {completedTasks}/{tasks.length} done
                           </p>
                         </div>
                       )}
@@ -539,7 +633,7 @@ export default function PlannerPage() {
                   );
                 })}
 
-                {/* Add / Edit Goal Form */}
+                {/* ── Add / Edit Goal Form ── */}
                 {(showGoalForm || editingGoal) && (
                   <div className="p-4 rounded-xl" style={{ background: "rgba(248,232,238,0.3)", border: "1px dashed var(--diary-rose)" }}>
                     <h4 className="text-sm font-semibold mb-3" style={{ color: "var(--diary-rose-deep)", fontFamily: "var(--font-diary-heading), serif" }}>
@@ -556,9 +650,9 @@ export default function PlannerPage() {
                       <textarea
                         value={goalForm.description}
                         onChange={(e) => setGoalForm({ ...goalForm, description: e.target.value })}
-                        placeholder="Why does this matter? (optional)"
+                        placeholder={"Details (use bullet points):\n- Step 1\n- Step 2\n- Step 3"}
                         className="diary-input text-sm"
-                        rows={2}
+                        rows={3}
                       />
                       <div>
                         <label className="block text-[9px] uppercase tracking-[0.1em] mb-1" style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}>
@@ -567,7 +661,7 @@ export default function PlannerPage() {
                         <textarea
                           value={goalForm.tasks}
                           onChange={(e) => setGoalForm({ ...goalForm, tasks: e.target.value })}
-                          placeholder={"Task 1\nTask 2\nTask 3"}
+                          placeholder={"Buy application materials\nWrite personal statement\nGet recommendation letters"}
                           className="diary-input text-sm"
                           rows={3}
                         />
@@ -591,20 +685,7 @@ export default function PlannerPage() {
                   </div>
                 )}
 
-                {/* Add Goal Button */}
-                {!showGoalForm && !editingGoal && (
-                  <button
-                    onClick={() => setShowGoalForm(true)}
-                    className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-dashed border-[#F9ABDF]/30 text-xs font-medium transition-all hover:bg-[#F9ABDF]/10"
-                    style={{ color: "var(--diary-rose-deep)", fontFamily: "var(--font-diary-heading), serif" }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Add a Goal
-                  </button>
-                )}
-
+                {/* Empty state */}
                 {selectedPlan.goals?.length === 0 && !showGoalForm && (
                   <div className="text-center py-8">
                     <div className="text-3xl mb-2 opacity-30">🎯</div>
@@ -617,10 +698,13 @@ export default function PlannerPage() {
                   </div>
                 )}
               </div>
+
+              {/* Ink blots */}
+              <div className="ink-blot" style={{ bottom: "2rem", right: "3rem" }} />
             </div>
           )}
 
-          {/* Empty state */}
+          {/* ═══ EMPTY STATE ═══ */}
           {!selectedPlan && !showCreateForm && (
             <div className="notepad-card diary-paper relative pl-8 sm:pl-12 pr-4 sm:pr-6 py-12 text-center">
               <SpiralBinding />
@@ -638,10 +722,7 @@ export default function PlannerPage() {
                   }
                 </p>
                 {plans.length === 0 && (
-                  <button
-                    onClick={() => setShowCreateForm(true)}
-                    className="diary-btn text-xs"
-                  >
+                  <button onClick={() => setShowCreateForm(true)} className="diary-btn text-xs">
                     <span className="inline-flex items-center gap-1.5">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
