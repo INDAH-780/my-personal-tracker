@@ -54,12 +54,15 @@ export default function AffirmationBanner() {
   }, []);
 
   return (
-    <p
-      className={`text-sm text-gray-400 dark:text-gray-500 italic mt-1.5 transition-opacity duration-800 ${
-        fading ? "opacity-0" : "opacity-100"
-      }`}
-    >
-      {AFFIRMATIONS[index]}
-    </p>
+    <div className="mb-4 -mx-1">
+      <p
+        className={`text-sm text-gray-400 dark:text-gray-500 italic transition-opacity duration-800 px-3 py-1.5 rounded-lg ${
+          fading ? "opacity-0" : "opacity-100"
+        }`}
+        style={{ background: "linear-gradient(90deg, rgba(249,171,223,0.06), transparent)" }}
+      >
+        {AFFIRMATIONS[index]}
+      </p>
+    </div>
   );
 }

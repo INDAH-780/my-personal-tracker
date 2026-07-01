@@ -2,7 +2,48 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { DIARY_TYPE_LABELS, DIARY_TYPE_COLORS, type DiaryEntryType } from "@/lib/constants";
+import { DIARY_TYPE_LABELS, type DiaryEntryType } from "@/lib/constants";
+
+const BIBLE_VERSES = [
+  { text: "For I know the plans I have for you, declares the Lord, plans to prosper you and not to harm you, plans to give you hope and a future.", ref: "Jeremiah 29:11" },
+  { text: "She is clothed with strength and dignity; she can laugh at the days to come.", ref: "Proverbs 31:25" },
+  { text: "Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to him, and he will make your paths straight.", ref: "Proverbs 3:5-6" },
+  { text: "The Lord will fight for you; you need only to be still.", ref: "Exodus 14:14" },
+  { text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go.", ref: "Joshua 1:9" },
+  { text: "I can do all things through Christ who strengthens me.", ref: "Philippians 4:13" },
+  { text: "But those who hope in the Lord will renew their strength. They will soar on wings like eagles.", ref: "Isaiah 40:31" },
+  { text: "Let all that you do be done in love.", ref: "1 Corinthians 16:14" },
+  { text: "The Lord is my shepherd; I shall not want. He makes me lie down in green pastures.", ref: "Psalm 23:1-2" },
+  { text: "She speaks with wisdom, and faithful instruction is on her tongue.", ref: "Proverbs 31:26" },
+  { text: "Commit to the Lord whatever you do, and he will establish your plans.", ref: "Proverbs 16:3" },
+  { text: "And we know that in all things God works for the good of those who love him.", ref: "Romans 8:28" },
+];
+
+function FloralCorner({ className }: { className: string }) {
+  return (
+    <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 90 C20 70, 40 50, 60 35 C70 28, 80 20, 85 10" stroke="#e8a0b8" strokeWidth="1" fill="none" opacity="0.5" />
+      <path d="M15 85 C25 65, 45 45, 55 35" stroke="#f9abdf" strokeWidth="0.8" fill="none" opacity="0.4" />
+      <circle cx="60" cy="35" r="4" fill="#f9abdf" opacity="0.3" />
+      <circle cx="85" cy="10" r="3" fill="#e8a0b8" opacity="0.3" />
+      <circle cx="40" cy="55" r="2.5" fill="#c9a96e" opacity="0.2" />
+      <path d="M55 30 C58 25, 65 22, 68 28" stroke="#e8a0b8" strokeWidth="0.6" fill="none" opacity="0.4" />
+      <path d="M57 32 C60 38, 55 42, 50 38" stroke="#f9abdf" strokeWidth="0.6" fill="none" opacity="0.3" />
+      <circle cx="30" cy="70" r="2" fill="#c9a96e" opacity="0.15" />
+      <path d="M20 80 Q35 60, 50 50" stroke="#e8a0b8" strokeWidth="0.5" fill="none" opacity="0.3" />
+    </svg>
+  );
+}
+
+function SpiralBinding() {
+  return (
+    <div className="spiral-binding hidden sm:flex">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div key={i} className="spiral-ring" />
+      ))}
+    </div>
+  );
+}
 
 export default function DiaryPage() {
   const [entries, setEntries] = useState<any[]>([]);
@@ -13,6 +54,8 @@ export default function DiaryPage() {
   const [dateTo, setDateTo] = useState("");
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [currentVerse, setCurrentVerse] = useState(0);
+  const [showFilters, setShowFilters] = useState(false);
 
   const fetchEntries = () => {
     const params = new URLSearchParams();
@@ -39,6 +82,13 @@ export default function DiaryPage() {
     fetchEntries();
   }, [types, dateFrom, dateTo, sortBy, sortOrder]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentVerse((prev) => (prev + 1) % BIBLE_VERSES.length);
+    }, 12000);
+    return () => clearInterval(interval);
+  }, []);
+
   const toggleType = (t: string) => {
     setTypes(types.includes(t) ? types.filter((x) => x !== t) : [...types, t]);
   };
@@ -52,344 +102,350 @@ export default function DiaryPage() {
 
   const hasFilters = search || types.length || dateFrom || dateTo;
 
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const verse = BIBLE_VERSES[currentVerse];
+
   return (
-    <div className="animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-display">
-            <span className="text-[#F9ABDF]">Diary</span>
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">{entries.length} entries</p>
-        </div>
-        <Link href="/diary/new" className="bg-[#F9ABDF] text-black px-6 py-3 rounded-full hover:bg-[#e891c7] transition-all duration-300 font-medium tracking-wide flex items-center justify-center gap-2 text-sm sm:text-base">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          New Entry
-        </Link>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="bg-white rounded-2xl border border-[#F9ABDF]/30 shadow-sm mb-6 dark:bg-gray-900 dark:border-[#F9ABDF]/20">
-        <div className="p-4 border-b border-[#F9ABDF]/20 dark:border-[#F9ABDF]/10">
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Search */}
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-[#F9ABDF]" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="M21 21l-4.35-4.35" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search entries..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && fetchEntries()}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F9ABDF]/5 border border-[#F9ABDF]/30 rounded-xl text-sm focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white dark:placeholder-gray-500"
-                />
-              </div>
-            </div>
-
-            {/* Type Dropdown */}
-            <FilterDropdown
-              label="Type"
-              options={Object.entries(DIARY_TYPE_LABELS)}
-              selected={types}
-              onToggle={toggleType}
-            />
-
-            {/* Clear Filters */}
-            {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="text-sm text-[#F9ABDF] hover:text-[#e891c7] transition-colors px-3 py-2 font-medium"
-              >
-                Clear All
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Date Filter Row */}
-        <div className="px-4 py-3 bg-[#F9ABDF]/5 dark:bg-[#F9ABDF]/5 rounded-b-2xl">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#F9ABDF]">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-              <span className="text-sm text-gray-500 dark:text-gray-400">Date Range</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">From</span>
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                className="bg-white border border-[#F9ABDF]/30 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">To</span>
-              <input
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                className="bg-white border border-[#F9ABDF]/30 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
-              />
-            </div>
-
-            {/* Active Filters */}
-            {hasFilters && (
-              <div className="flex flex-wrap gap-2 ml-auto">
-                {types.map((t) => (
-                  <FilterTag
-                    key={t}
-                    label={DIARY_TYPE_LABELS[t as DiaryEntryType]}
-                    onRemove={() => toggleType(t)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Sort Bar */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3 sm:gap-4 overflow-x-auto hide-scrollbar pb-1">
-          <span className="text-sm text-gray-500 dark:text-gray-400 shrink-0">Sort by:</span>
-          {[
-            { value: "date", label: "Date" },
-            { value: "title", label: "Title" },
-            { value: "type", label: "Type" },
-            { value: "createdAt", label: "Date Added" },
-          ].map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => {
-                if (sortBy === opt.value) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                else { setSortBy(opt.value); setSortOrder("asc"); }
-              }}
-              className={`text-sm font-medium transition-colors shrink-0 ${
-                sortBy === opt.value
-                  ? "text-[#F9ABDF]"
-                  : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              }`}
+    <div className="diary-page-enter">
+      {/* Page Header - looks like diary cover */}
+      <div className="relative mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <p className="diary-date-stamp text-xs uppercase tracking-[0.15em] mb-2 opacity-70">
+              {dateStr}
+            </p>
+            <h1 className="diary-heading text-3xl sm:text-4xl font-bold">
+              My Diary
+            </h1>
+            <p
+              className="mt-1 text-sm italic"
+              style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
             >
-              {opt.label}
-              {sortBy === opt.value && (
-                <span className="ml-1">{sortOrder === "asc" ? "↑" : "↓"}</span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-[#F9ABDF]/20 shadow-sm overflow-hidden dark:bg-gray-900 dark:border-[#F9ABDF]/10">
-        {loading ? (
-          <div className="p-12 text-center">
-            <div className="inline-flex items-center gap-3 text-gray-500">
-              <svg className="animate-spin h-5 w-5 text-[#F9ABDF]" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              Loading diary entries...
-            </div>
-          </div>
-        ) : entries.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-16 h-16 bg-[#F9ABDF]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 dark:bg-[#F9ABDF]/20">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F9ABDF" strokeWidth="1.5">
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-              </svg>
-            </div>
-            <p className="text-gray-600 font-medium mb-1 dark:text-gray-400">No diary entries yet</p>
-            <p className="text-sm text-gray-400">
-              {hasFilters ? "Try adjusting your filters" : "Start journaling your journey"}
+              {entries.length} {entries.length === 1 ? "entry" : "entries"} written
             </p>
           </div>
-        ) : (
-          <div className="divide-y divide-[#F9ABDF]/10 dark:divide-[#F9ABDF]/5">
-            {/* Desktop Table Header */}
-            <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 bg-[#F9ABDF]/10 dark:bg-[#F9ABDF]/5 text-xs font-semibold text-gray-600 uppercase tracking-wider dark:text-gray-400">
-              <div className="col-span-5">Entry</div>
-              <div className="col-span-2">Type</div>
-              <div className="col-span-2">Linked Opportunity</div>
-              <div className="col-span-1">Mood</div>
-              <div className="col-span-2 text-right">Date</div>
-            </div>
+          <Link
+            href="/diary/new"
+            className="diary-btn inline-flex items-center gap-2 no-underline"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+            New Entry
+          </Link>
+        </div>
 
-            {/* Table Rows */}
-            {entries.map((entry) => (
-              <div key={entry.id}>
-                {/* Desktop Row */}
-                <Link
-                  href={`/diary/${entry.id}`}
-                  className="hidden lg:grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors items-center group"
-                >
-                  <div className="col-span-5">
-                    <p className="font-semibold text-gray-900 group-hover:text-[#F9ABDF] transition-colors truncate dark:text-white">
-                      {entry.title}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{entry.content}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <TypeBadge type={entry.type} />
-                  </div>
-                  <div className="col-span-2">
-                    {entry.opportunity ? (
-                      <span className="text-sm text-[#F9ABDF] truncate block">
-                        {entry.opportunity.name}
-                      </span>
-                    ) : (
-                      <span className="text-sm text-gray-300 dark:text-gray-600">—</span>
-                    )}
-                  </div>
-                  <div className="col-span-1">
-                    {entry.mood ? (
-                      <span className="text-lg">{["", "😟", "😕", "😐", "🙂", "😊"][entry.mood]}</span>
-                    ) : (
-                      <span className="text-sm text-gray-300 dark:text-gray-600">—</span>
-                    )}
-                  </div>
-                  <div className="col-span-2 text-right">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {new Date(entry.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                    </span>
-                  </div>
-                </Link>
+        {/* Decorative divider */}
+        <div className="diary-divider">
+          <span className="diary-divider-icon">&#10047;</span>
+        </div>
+      </div>
 
-                {/* Mobile Card */}
-                <Link
-                  href={`/diary/${entry.id}`}
-                  className="lg:hidden p-4 hover:bg-[#F9ABDF]/5 dark:hover:bg-[#F9ABDF]/5 transition-colors block"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-gray-900 dark:text-white truncate">{entry.title}</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{entry.content}</p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {entry.mood ? (
-                        <span className="text-base">{["", "😟", "😕", "😐", "🙂", "😊"][entry.mood]}</span>
-                      ) : null}
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {new Date(entry.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <TypeBadge type={entry.type} />
-                    {entry.opportunity && (
-                      <span className="text-xs text-[#F9ABDF] truncate">
-                        {entry.opportunity.name}
-                      </span>
-                    )}
-                  </div>
-                </Link>
-              </div>
-            ))}
+      {/* Main Notepad */}
+      <div className="notepad-card diary-paper relative pl-12 sm:pl-16 pr-4 sm:pr-8 py-8 sm:py-10 mb-8">
+        <SpiralBinding />
+
+        {/* Washi tape */}
+        <div className="washi-tape washi-tape-top" />
+
+        {/* Ribbon bookmark */}
+        <div className="ribbon-bookmark" />
+
+        {/* Floral corners */}
+        <FloralCorner className="floral-corner floral-corner-tl" />
+        <FloralCorner className="floral-corner floral-corner-br" />
+
+        {/* Bible verse - top right, fading */}
+        <div className="verse-container">
+          <p className="verse-text">&ldquo;{verse.text}&rdquo;</p>
+          <p className="verse-reference">&mdash; {verse.ref}</p>
+        </div>
+
+        {/* Search & Filter area */}
+        <div className="relative z-10 mb-8">
+          {/* Search bar */}
+          <div className="relative mb-4">
+            <svg
+              className="absolute left-0 top-1/2 -translate-y-1/2 opacity-40"
+              style={{ color: "var(--diary-rose)" }}
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search through your diary..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && fetchEntries()}
+              className="diary-input pl-7"
+            />
           </div>
-        )}
+
+          {/* Filter toggle */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="diary-btn-outline text-xs py-1.5 px-4 inline-flex items-center gap-1.5"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+              </svg>
+              {showFilters ? "Hide Filters" : "Filters"}
+              {hasFilters && (
+                <span
+                  className="w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold"
+                  style={{ background: "var(--diary-rose)", color: "white" }}
+                >
+                  {(types.length || 0) + (dateFrom ? 1 : 0) + (dateTo ? 1 : 0)}
+                </span>
+              )}
+            </button>
+
+            {/* Sort buttons */}
+            <div className="flex items-center gap-1 ml-auto">
+              {[
+                { value: "date", label: "Date" },
+                { value: "title", label: "Title" },
+                { value: "type", label: "Type" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    if (sortBy === opt.value) setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+                    else {
+                      setSortBy(opt.value);
+                      setSortOrder("asc");
+                    }
+                  }}
+                  className="text-xs px-2.5 py-1 rounded-full transition-all"
+                  style={{
+                    fontFamily: "var(--font-diary-heading), serif",
+                    letterSpacing: "0.04em",
+                    background: sortBy === opt.value ? "var(--diary-blush)" : "transparent",
+                    color: sortBy === opt.value ? "var(--diary-rose-deep)" : "var(--diary-ink-light)",
+                  }}
+                >
+                  {opt.label}
+                  {sortBy === opt.value && (
+                    <span className="ml-0.5">{sortOrder === "asc" ? "↑" : "↓"}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Expanded filters */}
+          {showFilters && (
+            <div
+              className="mt-4 p-4 rounded-xl"
+              style={{ background: "rgba(248, 232, 238, 0.3)", border: "1px dashed var(--diary-rose)" }}
+            >
+              <div className="flex flex-wrap gap-2 mb-3">
+                {(Object.entries(DIARY_TYPE_LABELS) as [DiaryEntryType, string][]).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => toggleType(key)}
+                    className={`diary-tag ${types.includes(key) ? "active" : ""}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
+                >
+                  Date range:
+                </span>
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={(e) => setDateFrom(e.target.value)}
+                  className="diary-input text-sm"
+                  style={{ maxWidth: "150px" }}
+                />
+                <span className="text-xs" style={{ color: "var(--diary-ink-light)" }}>to</span>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={(e) => setDateTo(e.target.value)}
+                  className="diary-input text-sm"
+                  style={{ maxWidth: "150px" }}
+                />
+                {hasFilters && (
+                  <button
+                    onClick={clearFilters}
+                    className="text-xs underline ml-auto"
+                    style={{ color: "var(--diary-rose-deep)" }}
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Diary Entries */}
+        <div className="relative z-10">
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="inline-flex flex-col items-center gap-3">
+                <div className="flex gap-1">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="w-2 h-2 rounded-full animate-pulse"
+                      style={{
+                        background: "var(--diary-rose)",
+                        animationDelay: `${i * 0.2}s`,
+                      }}
+                    />
+                  ))}
+                </div>
+                <span
+                  className="text-sm italic"
+                  style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
+                >
+                  Turning the pages...
+                </span>
+              </div>
+            </div>
+          ) : entries.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="mb-4 opacity-30">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--diary-rose)" strokeWidth="1" className="mx-auto">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+              </div>
+              <p
+                className="text-lg mb-1"
+                style={{ color: "var(--diary-ink)", fontFamily: "var(--font-diary-heading), serif" }}
+              >
+                {hasFilters ? "No entries match your search" : "Your diary awaits..."}
+              </p>
+              <p
+                className="text-sm italic"
+                style={{ color: "var(--diary-ink-light)" }}
+              >
+                {hasFilters ? "Try different filters" : "Start writing your story today"}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {entries.map((entry, index) => (
+                <Link
+                  key={entry.id}
+                  href={`/diary/${entry.id}`}
+                  className="diary-entry-card block p-5 sm:p-6 no-underline group"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      {/* Date */}
+                      <p
+                        className="diary-date-stamp text-[10px] uppercase tracking-[0.12em] mb-1.5 opacity-60"
+                      >
+                        {new Date(entry.date).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+
+                      {/* Title */}
+                      <h3
+                        className="diary-heading text-lg sm:text-xl font-bold mb-2 group-hover:opacity-80 transition-opacity"
+                      >
+                        {entry.title}
+                      </h3>
+
+                      {/* Content preview */}
+                      <p
+                        className="diary-handwritten text-sm leading-relaxed line-clamp-2 opacity-70"
+                        style={{ lineHeight: "1.8rem" }}
+                      >
+                        {entry.content}
+                      </p>
+
+                      {/* Tags & meta */}
+                      <div className="flex flex-wrap items-center gap-2 mt-3">
+                        <span
+                          className="text-[10px] px-2.5 py-0.5 rounded-full"
+                          style={{
+                            background: "var(--diary-blush)",
+                            color: "var(--diary-rose-deep)",
+                            fontFamily: "var(--font-diary-heading), serif",
+                            letterSpacing: "0.05em",
+                          }}
+                        >
+                          {DIARY_TYPE_LABELS[entry.type as DiaryEntryType]}
+                        </span>
+                        {entry.opportunity && (
+                          <span
+                            className="text-[10px] px-2 py-0.5 rounded-full"
+                            style={{
+                              border: "1px solid var(--diary-gold-light)",
+                              color: "var(--diary-gold)",
+                              fontFamily: "var(--font-diary-heading), serif",
+                            }}
+                          >
+                            {entry.opportunity.name}
+                          </span>
+                        )}
+                        {entry.mood > 0 && (
+                          <span className="text-sm">
+                            {["", "💔", "😔", "💛", "🌸", "✨"][entry.mood]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Decorative corner */}
+                    <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--diary-rose)" strokeWidth="1.5" opacity="0.4">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Bottom ink blots decoration */}
+        <div className="ink-blot" style={{ bottom: "2rem", right: "3rem" }} />
+        <div className="ink-blot" style={{ bottom: "2.5rem", right: "4rem", width: "4px", height: "4px" }} />
+      </div>
+
+      {/* Bottom decorative note */}
+      <div className="text-center pb-8">
+        <p
+          className="text-xs italic opacity-40"
+          style={{ color: "var(--diary-ink-light)", fontFamily: "var(--font-diary-heading), serif" }}
+        >
+          &ldquo;Every day is a new page in your story&rdquo;
+        </p>
       </div>
     </div>
-  );
-}
-
-function FilterDropdown({ label, options, selected, onToggle }: {
-  label: string;
-  options: [string, string][];
-  selected: string[];
-  onToggle: (val: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-          selected.length
-            ? "bg-[#F9ABDF] text-black"
-            : "bg-[#F9ABDF]/10 text-gray-700 hover:bg-[#F9ABDF]/20 dark:bg-[#F9ABDF]/10 dark:text-gray-300 dark:hover:bg-[#F9ABDF]/20"
-        }`}
-      >
-        {label}
-        {selected.length > 0 && (
-          <span className="w-5 h-5 bg-black text-white text-xs rounded-full flex items-center justify-center font-bold dark:bg-white dark:text-black">
-            {selected.length}
-          </span>
-        )}
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </button>
-
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-[#F9ABDF]/20 py-2 z-50 animate-slide-down max-h-64 overflow-y-auto dark:bg-gray-900 dark:border-[#F9ABDF]/10">
-            {options.map(([key, value]) => (
-              <label
-                key={key}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-[#F9ABDF]/5 cursor-pointer transition-colors dark:hover:bg-[#F9ABDF]/10"
-              >
-                <input
-                  type="checkbox"
-                  checked={selected.includes(key)}
-                  onChange={() => onToggle(key)}
-                  className="w-4 h-4 rounded border-[#F9ABDF] text-[#F9ABDF] focus:ring-[#F9ABDF]"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300">{value}</span>
-              </label>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function FilterTag({ label, onRemove }: { label: string; onRemove: () => void }) {
-  return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-[#F9ABDF]/20 text-gray-900 dark:text-white">
-      {label}
-      <button onClick={onRemove} className="hover:opacity-70 transition-opacity">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
-    </span>
-  );
-}
-
-function TypeBadge({ type }: { type: string }) {
-  const config: Record<string, { bg: string; text: string }> = {
-    MENTORSHIP_SESSION: { bg: "bg-[#F9ABDF]/30", text: "text-gray-700 dark:text-gray-300" },
-    MEETING: { bg: "bg-[#F9ABDF]/20", text: "text-gray-700 dark:text-gray-300" },
-    EVENT: { bg: "bg-[#F9ABDF]/40", text: "text-gray-700 dark:text-gray-300" },
-    WORKSHOP: { bg: "bg-[#F9ABDF]/25", text: "text-gray-700 dark:text-gray-300" },
-    REFLECTION: { bg: "bg-[#F9ABDF]/15", text: "text-gray-700 dark:text-gray-300" },
-    GOAL_SETTING: { bg: "bg-[#F9ABDF]/35", text: "text-gray-700 dark:text-gray-300" },
-    APPLICATION_UPDATE: { bg: "bg-[#F9ABDF]/20", text: "text-gray-700 dark:text-gray-300" },
-    LEARNING_NOTE: { bg: "bg-[#F9ABDF]/30", text: "text-gray-700 dark:text-gray-300" },
-    GENERAL: { bg: "bg-gray-100 dark:bg-gray-800", text: "text-gray-700 dark:text-gray-300" },
-  };
-
-  const { bg, text } = config[type] || config.GENERAL;
-
-  return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold ${bg} ${text}`}>
-      {DIARY_TYPE_LABELS[type as DiaryEntryType]}
-    </span>
   );
 }
