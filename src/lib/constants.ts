@@ -201,6 +201,38 @@ export const SCHOLARSHIP_STATUS_COLORS: Record<ScholarshipStatus, string> = {
   WAITLISTED: "bg-orange-100 text-orange-700",
 };
 
+export type ResearchCategory =
+  | "SCHOOL"
+  | "SCHOLARSHIP"
+  | "FACULTY"
+  | "DEPARTMENT"
+  | "PROGRAMS"
+  | "PEOPLE"
+  | "PAPERS"
+  | "GENERAL";
+
+export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
+  SCHOOL: "The School",
+  SCHOLARSHIP: "The Scholarship",
+  FACULTY: "Faculty",
+  DEPARTMENT: "Departments",
+  PROGRAMS: "Programs",
+  PEOPLE: "People & Contacts",
+  PAPERS: "Papers & Resources",
+  GENERAL: "General Notes",
+};
+
+export const RESEARCH_CATEGORY_ICONS: Record<ResearchCategory, string> = {
+  SCHOOL: "🏛️",
+  SCHOLARSHIP: "🎓",
+  FACULTY: "👩‍🏫",
+  DEPARTMENT: "🏢",
+  PROGRAMS: "📚",
+  PEOPLE: "🤝",
+  PAPERS: "📄",
+  GENERAL: "📝",
+};
+
 export const TAGS = [
   "AI / Machine Learning",
   "Healthcare AI",
