@@ -34,12 +34,6 @@ function FloralCorner({ className }: { className: string }) {
   );
 }
 
-const TIME_SLOTS = [
-  "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM",
-  "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM",
-  "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM",
-];
-
 export default function DailyPage() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -249,17 +243,14 @@ export default function DailyPage() {
         {/* Add Task */}
         <div className="relative z-10 mb-6">
           <div className="flex gap-2">
-            <select
+            <input
+              type="text"
               value={newTime}
               onChange={(e) => setNewTime(e.target.value)}
-              className="diary-select text-sm shrink-0"
-              style={{ minWidth: "80px" }}
-            >
-              <option value="">Time</option>
-              {TIME_SLOTS.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
+              placeholder="Time"
+              className="diary-input text-sm shrink-0"
+              style={{ width: "100px", minWidth: "80px" }}
+            />
             <input
               type="text"
               value={newTask}
@@ -327,17 +318,14 @@ export default function DailyPage() {
                 {/* Task content */}
                 {editingTask === task.id ? (
                   <div className="flex-1 flex gap-2">
-                    <select
+                    <input
+                      type="text"
                       value={editTime}
                       onChange={(e) => setEditTime(e.target.value)}
-                      className="diary-select text-xs shrink-0"
-                      style={{ minWidth: "70px", padding: "4px 8px" }}
-                    >
-                      <option value="">Time</option>
-                      {TIME_SLOTS.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
+                      placeholder="Time"
+                      className="diary-input text-xs shrink-0"
+                      style={{ width: "90px", minWidth: "70px" }}
+                    />
                     <input
                       type="text"
                       value={editText}
