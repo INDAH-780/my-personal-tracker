@@ -59,6 +59,7 @@ model User {
   courses        Course[]
   scholarships   Scholarship[]
   plans          Plan[]
+  dailyTasks     DailyTask[]
 }
 
 model Opportunity {
@@ -225,4 +226,19 @@ model PlanGoal {
 
   @@index([planId])
   @@index([status])
+}
+
+model DailyTask {
+  id              String   @id @default(cuid())
+  userId          String
+  date            DateTime
+  title           String
+  time            String?
+  done            Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
 }

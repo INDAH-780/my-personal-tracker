@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import MotivationalQuote from "@/components/MotivationalQuote";
 import AffirmationBanner from "@/components/AffirmationBanner";
+import BibleVerse from "@/components/BibleVerse";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -54,6 +55,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
         <div className="p-4 lg:p-8">
+          <BibleVerse />
           <AffirmationBanner />
           {children}
         </div>
