@@ -268,6 +268,49 @@ export const GOAL_STATUS_COLORS: Record<string, string> = {
   COMPLETED: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
 };
 
+export type ProjectStatus =
+  | "PLANNING"
+  | "IN_PROGRESS"
+  | "ON_HOLD"
+  | "COMPLETED";
+
+export const PROJECT_STATUS_LABELS: Record<ProjectStatus, string> = {
+  PLANNING: "Planning",
+  IN_PROGRESS: "In Progress",
+  ON_HOLD: "On Hold",
+  COMPLETED: "Completed",
+};
+
+export const PROJECT_STATUS_COLORS: Record<ProjectStatus, string> = {
+  PLANNING: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  IN_PROGRESS: "bg-[#F9ABDF]/20 text-gray-700 dark:text-gray-300",
+  ON_HOLD: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
+  COMPLETED: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+};
+
+export type ProjectNoteCategory =
+  | "EQUIPMENT"
+  | "PAPERS"
+  | "STRUCTURE"
+  | "ARTICLES"
+  | "GENERAL";
+
+export const PROJECT_NOTE_CATEGORY_LABELS: Record<ProjectNoteCategory, string> = {
+  EQUIPMENT: "Equipment & Materials",
+  PAPERS: "Papers & Research",
+  STRUCTURE: "Project Structure",
+  ARTICLES: "Articles & Writing",
+  GENERAL: "General Notes",
+};
+
+export const PROJECT_NOTE_CATEGORY_ICONS: Record<ProjectNoteCategory, string> = {
+  EQUIPMENT: "🔧",
+  PAPERS: "📄",
+  STRUCTURE: "📐",
+  ARTICLES: "✍️",
+  GENERAL: "📝",
+};
+
 export const TAGS = [
   "AI / Machine Learning",
   "Healthcare AI",

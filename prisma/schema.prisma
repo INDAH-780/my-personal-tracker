@@ -60,6 +60,7 @@ model User {
   scholarships   Scholarship[]
   plans          Plan[]
   dailyTasks     DailyTask[]
+  projects       Project[]
 }
 
 model Opportunity {
@@ -241,4 +242,37 @@ model DailyTask {
 
   @@index([userId])
   @@index([date])
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  userId          String
+  name            String
+  description     String?
+  status          String   @default("PLANNING")
+  startDate       DateTime?
+  endDate         DateTime?
+  tags            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes           ProjectNote[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model ProjectNote {
+  id              String   @id @default(cuid())
+  projectId       String
+  category        String
+  title           String
+  content         String
+  links           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([category])
 }
