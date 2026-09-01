@@ -63,30 +63,26 @@ export async function searchScholarships(): Promise<SearchResult[]> {
 function scholarshipSearchQueries(): string[] {
   const nextCycle = new Date().getUTCFullYear() + 1;
   return [
-    `fully funded international master's PhD scholarship computer engineering electrical engineering ${nextCycle}`,
-    `fully funded international scholarship artificial intelligence machine learning master's PhD ${nextCycle}`,
-    `fully funded robotics embedded systems TinyML scholarship master's PhD ${nextCycle}`,
-    `Africa scholarship master's PhD AI engineering international students ${nextCycle}`,
-    `Europe scholarship master's PhD AI robotics embedded systems international students ${nextCycle}`,
-    `Australia scholarship master's PhD computer engineering machine learning international students ${nextCycle}`,
-    `Asia scholarship master's PhD electrical engineering artificial intelligence international students ${nextCycle}`,
-    `Americas scholarship master's PhD computer engineering AI international students ${nextCycle}`,
-    `MBA artificial intelligence scholarship international students ${nextCycle}`,
-    `Mastercard Foundation Scholars Program partner universities master's computer engineering electrical engineering AI robotics ${nextCycle}`,
-    `"Mastercard Foundation Scholars Program" master's artificial intelligence machine learning embedded systems ${nextCycle}`,
-    `site:mastercardfdn.org scholars program university partners graduate engineering technology ${nextCycle}`,
-    `university "Mastercard Foundation Scholars Program" postgraduate engineering computer science ${nextCycle}`,
-    `site:harvard.edu graduate scholarship fellowship international students computer science engineering ${nextCycle}`,
-    `site:yale.edu graduate scholarship fellowship international students computer science engineering ${nextCycle}`,
-    `site:princeton.edu graduate funding fellowship international students computer science engineering ${nextCycle}`,
-    `site:columbia.edu graduate scholarship fellowship international students computer engineering AI ${nextCycle}`,
-    `site:upenn.edu graduate scholarship fellowship international students engineering AI ${nextCycle}`,
-    `site:brown.edu graduate scholarship fellowship international students computer science engineering ${nextCycle}`,
-    `site:dartmouth.edu graduate scholarship fellowship international students engineering computer science ${nextCycle}`,
-    `site:cornell.edu graduate scholarship fellowship international students engineering AI ${nextCycle}`,
-    `university graduate school funded master's PhD international students AI machine learning ${nextCycle}`,
-    `computer science engineering department fellowship assistantship international graduate students ${nextCycle}`,
-    `funded PhD studentship robotics embedded systems international applicants ${nextCycle}`,
+    `fully funded master's scholarship computer engineering electrical engineering international students Cameroon ${nextCycle}`,
+    `Mastercard Foundation Scholars Program master's engineering computer science AI partner universities ${nextCycle}`,
+    `site:mastercardfdn.org "Master's" Scholars Program engineering technology university partners ${nextCycle}`,
+    `DAAD scholarship master's STEM engineering computer science Cameroon ${nextCycle}`,
+    `DAAD EPOS master's artificial intelligence computer engineering Cameroon ${nextCycle}`,
+    `Fulbright Foreign Student Cameroon master's computer engineering artificial intelligence ${nextCycle}`,
+    `MEXT scholarship master's research student computer engineering AI Cameroon ${nextCycle}`,
+    `Chinese Government Scholarship CSC master's artificial intelligence electrical engineering Cameroon ${nextCycle}`,
+    `site:fens.sabanciuniv.edu master's scholarship computer science engineering international students ${nextCycle}`,
+    `Schwarzman Scholars master's scholarship Cameroon ${nextCycle}`,
+    `Erasmus Mundus joint master's scholarship artificial intelligence robotics embedded systems ${nextCycle}`,
+    `Türkiye Scholarships master's computer engineering artificial intelligence Cameroon ${nextCycle}`,
+    `Stipendium Hungaricum master's computer engineering AI Cameroon ${nextCycle}`,
+    `Swedish Institute scholarship master's AI engineering Cameroon ${nextCycle}`,
+    `Eiffel Excellence scholarship master's artificial intelligence engineering Cameroon ${nextCycle}`,
+    `Commonwealth master's scholarship Cameroon computer engineering AI ${nextCycle}`,
+    `site:ubc.ca Mastercard Foundation master's scholarship engineering computer science ${nextCycle}`,
+    `site:berkeley.edu Mastercard Foundation master's scholarship engineering computer science ${nextCycle}`,
+    `site:nycu.edu.tw international master's scholarship electrical engineering computer science Cameroon ${nextCycle}`,
+    `site:ashesi.edu.gh Mastercard Foundation master's engineering technology scholarship ${nextCycle}`,
   ];
 }
 
@@ -94,6 +90,7 @@ export async function extractScholarships(results: SearchResult[]): Promise<Disc
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
   if (results.length === 0) return [];
+  const applicantCountry = process.env.SCHOLARSHIP_APPLICANT_COUNTRY || "Cameroon";
 
   const batches = chunk(results, 30);
   const extractedBatches = await mapWithConcurrency(batches, 1, async (batch) => {
@@ -108,7 +105,7 @@ export async function extractScholarships(results: SearchResult[]): Promise<Disc
         systemInstruction: {
           parts: [
             {
-              text: "Extract genuine graduate funding opportunities from search results. Keep Master's, PhD, or AI-focused MBA scholarships, fellowships, grants, tuition awards, funded studentships, and clearly funded graduate programmes relevant to computer engineering, electrical engineering, robotics, AI, machine learning, embedded systems, TinyML, or closely related ML systems. Include official university, graduate-school, department, and financial-aid pages when they identify a real funding route for international graduate applicants, even if the funding is embedded within admission rather than branded as a scholarship. For umbrella schemes such as the Mastercard Foundation Scholars Program, do not create one generic record. First identify a participating university, then verify that university offers an eligible Master's programme aligned with the target fields, and only then create a separate record for that university/programme combination. Format its name as 'Mastercard Foundation Scholars Program – [University] – [Programme]', set organization to the university, use the university's official scholarship or application URL, and describe both the programme fit and Mastercard funding. Do not return a Mastercard partner whose covered programmes do not align with the target fields. Reject news articles, expired opportunities, unsupported listicles, undergraduate-only awards, loans, and pages without a credible official or primary source. Never invent missing facts or infer that a programme is funded merely because its university is a partner. Return JSON with a scholarships array. Each item must contain name, organization, url, amount, studyLevel, fields (array), deadline (YYYY-MM-DD or null), eligibilityCriteria, requirements, description, region, and confidence (0 to 1).",
+              text: `Extract genuine MASTER'S-LEVEL funding opportunities for an applicant from ${applicantCountry}. Do not return PhD, doctoral, undergraduate, postdoctoral, or PhD-only opportunities. A scheme that funds multiple levels may be returned only when the source verifies an eligible Master's route; set studyLevel to "Master's". Keep Master's scholarships, fellowships, grants, tuition awards, funded programmes, and MBA scholarships relevant to computer engineering, electrical engineering, robotics, AI, machine learning, embedded systems, TinyML, closely related ML systems, or technology leadership. Verify that applicants from ${applicantCountry} are eligible; reject awards restricted to other nationalities or regions. Include official university, government, programme, graduate-school, department, and financial-aid pages when they identify a real Master's funding route for international applicants. For umbrella schemes such as Mastercard Foundation, DAAD, Fulbright, MEXT, CSC, or Erasmus Mundus, prefer a programme-specific record. For Mastercard, identify a participating university, verify that its covered Master's programme aligns with the target fields, and create a separate record named 'Mastercard Foundation Scholars Program – [University] – [Programme]'. Never assume every programme at a partner university is covered. Use official or primary application URLs wherever possible. Reject news articles, expired opportunities, unsupported listicles, undergraduate-only awards, loans, unfunded admission pages, and any page without a credible primary source. Never invent a deadline, coverage, programme fit, or eligibility fact. Return JSON with a scholarships array. Each item must contain name, organization, url, amount, studyLevel (always "Master's"), fields (array), deadline (YYYY-MM-DD or null), eligibilityCriteria, requirements, description, region, and confidence (0 to 1).`,
             },
           ],
         },
@@ -139,12 +136,19 @@ export async function extractScholarships(results: SearchResult[]): Promise<Disc
     const extracted: DiscoveredScholarship[] = [];
     for (const scholarship of parsed.scholarships || []) {
       const normalized = normalizeScholarship(scholarship);
-      if (normalized && normalized.confidence >= 0.65) extracted.push(normalized);
+      if (normalized && normalized.confidence >= 0.65 && isMastersOpportunity(normalized)) {
+        extracted.push({ ...normalized, studyLevel: "Master's" });
+      }
     }
     return extracted;
   });
 
   return deduplicateScholarships(extractedBatches.flat());
+}
+
+function isMastersOpportunity(scholarship: DiscoveredScholarship): boolean {
+  const level = scholarship.studyLevel?.toLowerCase() || "";
+  return /master|\bmsc\b|\bm\.sc\b|\bmeng\b|\bmba\b/.test(level);
 }
 
 export function scholarshipFingerprint(scholarship: DiscoveredScholarship): string {
