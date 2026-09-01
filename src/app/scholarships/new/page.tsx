@@ -18,6 +18,7 @@ export default function NewScholarshipPage() {
     deadline: "",
     startDate: "",
     endDate: "",
+    eligibilityCriteria: "",
     requirements: "",
     description: "",
     notes: "",
@@ -180,13 +181,23 @@ export default function NewScholarshipPage() {
           <h2 className="font-semibold text-lg font-display mb-4 text-[#F9ABDF]">Details</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Requirements</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Eligibility Criteria</label>
+              <textarea
+                value={form.eligibilityCriteria}
+                onChange={(e) => set("eligibilityCriteria", e.target.value)}
+                className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
+                rows={4}
+                placeholder="Who can apply? Include nationality, degree level, field of study, academic, age, language, or other eligibility conditions."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Application Requirements</label>
               <textarea
                 value={form.requirements}
                 onChange={(e) => set("requirements", e.target.value)}
                 className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white"
-                rows={3}
-                placeholder="Eligibility criteria, documents needed..."
+                rows={4}
+                placeholder="What must be submitted? Include transcripts, CV, essays, recommendation letters, tests, passport, or other documents."
               />
             </div>
             <div>
