@@ -279,7 +279,11 @@ export default function ScholarshipDetailPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Requirements</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Eligibility Criteria</label>
+              <textarea value={form.eligibilityCriteria || ""} onChange={(e) => set("eligibilityCriteria", e.target.value)} className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white" rows={4} placeholder="Who can apply? Include nationality, degree level, field of study, academic, age, language, or other eligibility conditions." />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Application Requirements</label>
               <textarea value={form.requirements || ""} onChange={(e) => set("requirements", e.target.value)} className="w-full px-4 py-3 border border-[#F9ABDF]/30 rounded-xl focus:ring-2 focus:ring-[#F9ABDF] focus:border-transparent outline-none transition-all dark:bg-gray-800 dark:border-[#F9ABDF]/20 dark:text-white" rows={3} />
             </div>
             <div>
@@ -310,9 +314,16 @@ export default function ScholarshipDetailPage() {
               <InfoCard label="Deadline" value={scholarship.deadline ? new Date(scholarship.deadline).toLocaleDateString() : "—"} highlight={scholarship.deadline && isUpcoming(scholarship.deadline)} />
             </div>
 
+            {scholarship.eligibilityCriteria && (
+              <div className="mb-5">
+                <h3 className="text-xs font-semibold text-[#F9ABDF] mb-2 uppercase tracking-wider">Eligibility Criteria</h3>
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">{scholarship.eligibilityCriteria}</p>
+              </div>
+            )}
+
             {scholarship.requirements && (
               <div className="mb-5">
-                <h3 className="text-xs font-semibold text-[#F9ABDF] mb-2 uppercase tracking-wider">Requirements</h3>
+                <h3 className="text-xs font-semibold text-[#F9ABDF] mb-2 uppercase tracking-wider">Application Requirements</h3>
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-sm">{scholarship.requirements}</p>
               </div>
             )}
