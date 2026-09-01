@@ -95,10 +95,10 @@ export async function extractScholarships(results: SearchResult[]): Promise<Disc
   if (!apiKey) throw new Error("GEMINI_API_KEY is not configured");
   if (results.length === 0) return [];
 
-  const batches = chunk(results, 10);
-  const extractedBatches = await mapWithConcurrency(batches, 3, async (batch) => {
-    const model = process.env.GEMINI_EXTRACTION_MODEL || "gemini-2.5-flash-lite";
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+  const batches = chunk(results, 30);
+  const extractedBatches = await mapWithConcurrency(batches, 1, async (batch) => {
+    const model = process.env.GEMINI_EXTRACTION_MODEL || "gemini-3.6-flash";
+    const response = await fetchGeminiWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -215,6 +215,23 @@ function chunk<T>(values: T[], size: number): T[][] {
   const batches: T[][] = [];
   for (let index = 0; index < values.length; index += size) batches.push(values.slice(index, index + size));
   return batches;
+}
+
+async function fetchGeminiWithRetry(url: string, init: RequestInit): Promise<Response> {
+  const maxAttempts = 4;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const response = await fetch(url, init);
+    if (response.status !== 429 || attempt === maxAttempts - 1) return response;
+
+    const retryAfter = Number.parseInt(response.headers.get("retry-after") || "", 10);
+    const delayMs = Number.isFinite(retryAfter)
+      ? retryAfter * 1000
+      : 10_000 * 2 ** attempt;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+
+  throw new Error("Gemini retry attempts exhausted");
 }
 
 async function mapWithConcurrency<T, R>(
